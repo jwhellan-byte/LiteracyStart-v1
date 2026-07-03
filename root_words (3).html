@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Root Words — Kimberley School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --accent:#E8611A;
+  --cream:#f5f0dc;
+  --ink:#1a1a1a;
+  --bg:#e8e4dc;
+  --surface:#fff;
+  --border:#ccc;
+  --border-strong:#aaa;
+  --text:#1a1a1a;
+  --text-muted:#888;
+  --text-sub:#555;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --success-bg:#e6f4ea;--success-text:#1e6e35;
+  --warn-bg:#fff8e1;--warn-text:#8a6800;
+  --danger-bg:#fdecea;--danger-text:#b71c1c;
+}
+body{
+  font-family:'EB Garamond',Georgia,serif;
+  background:var(--bg);
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:1.25rem 1.5rem 2rem;gap:1rem;
+}
+
+/* ── SUBJECT FILTER ── */
+.subject-filter{display:flex;flex-wrap:wrap;gap:5px;width:100%;max-width:920px;}
+.subj-chip{
+  font-size:10.5px;padding:4px 10px;border-radius:20px;
+  border:1.5px solid var(--border-strong);background:transparent;
+  color:var(--text-sub);cursor:pointer;font-family:var(--sans);transition:all .12s;
+}
+.subj-chip.active{color:#fff;}
+
+/* ── MAIN LAYOUT ── */
+.main-layout{display:flex;gap:28px;align-items:flex-start;width:100%;max-width:920px;justify-content:center;}
+
+/* ── BOOK ── */
+.book-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;}
+.book-cover{width:330px;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);background:var(--accent);}
+.cover-top{background:var(--accent);padding:16px 18px 12px;display:flex;flex-direction:column;align-items:center;}
+.penguin-bar{width:100%;height:6px;}
+.penguin-oval{
+  background:var(--cream);border:2.5px solid var(--ink);
+  border-radius:50% 50% 55% 55%/45% 45% 55% 55%;
+  padding:12px 16px 14px;text-align:center;width:178px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;margin-top:6px;
+}
+.root-type-label{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#888;font-family:var(--sans);margin-bottom:3px;}
+.root-main{
+  font-family:'EB Garamond',Georgia,serif;font-weight:600;color:var(--ink);
+  letter-spacing:.05em;line-height:1;word-break:break-word;width:100%;text-align:center;
+}
+.root-main.title-state{font-size:38px;color:#bbb;letter-spacing:.12em;}
+.h-rule{width:100%;height:2.5px;background:var(--ink);}
+.cover-white{background:var(--cream);display:flex;align-items:stretch;min-height:210px;}
+.side-label{
+  writing-mode:vertical-rl;font-family:'EB Garamond',Georgia,serif;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);padding:14px 6px;flex-shrink:0;
+}
+.side-label.flip{transform:rotate(180deg);}
+.words-section{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 6px;}
+.cover-divider{width:50px;height:2px;background:var(--accent);margin:8px auto 4px;}
+
+/* tiles */
+.word-tile{width:100%;text-align:center;padding:5px 6px;cursor:pointer;border-radius:3px;margin:2px 0;}
+.tile-hidden{border:1.5px dashed #ccc;font-size:12px;color:#aaa;font-style:italic;font-family:var(--sans);}
+.tile-hidden:hover{border-color:var(--accent);}
+.tile-revealed{cursor:default;}
+.tile-word-row{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;}
+.tile-word-text{font-size:19px;font-weight:600;color:var(--ink);line-height:1.2;}
+.tile-note{font-size:11px;color:var(--text-sub);font-style:italic;font-family:var(--sans);margin-top:1px;display:none;}
+.tile-note.show{display:block;}
+.root-hl{color:var(--accent);}
+.subj-tag{font-size:8px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;padding:2px 5px;border-radius:8px;font-family:var(--sans);color:#fff;flex-shrink:0;}
+.no-words-msg{font-size:12px;color:#aaa;font-style:italic;font-family:var(--sans);text-align:center;padding:1.5rem 0.5rem;}
+.title-prompt{font-size:13px;color:#bbb;font-family:var(--sans);text-align:center;padding:2rem 0.5rem;font-style:italic;}
+
+/* book bottom */
+.cover-bottom{background:var(--accent);padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.school-logo{width:38px;height:38px;object-fit:contain;}
+.school-text{font-family:'EB Garamond',Georgia,serif;font-size:13px;color:var(--cream);letter-spacing:.12em;text-transform:uppercase;}
+
+/* ── CONTROLS ── */
+.controls-col{display:flex;flex-direction:column;gap:14px;flex:1;min-width:280px;max-width:400px;padding-top:4px;}
+.toolbar{display:flex;flex-direction:column;gap:10px;}
+.toolbar-row{display:flex;gap:6px;align-items:center;justify-content:space-between;}
+.tb-label{font-size:11px;color:var(--text-muted);font-family:var(--sans);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+.seg{display:flex;border:1.5px solid var(--border-strong);border-radius:5px;overflow:hidden;}
+.seg-btn{
+  padding:5px 11px;font-size:12px;font-family:var(--sans);background:transparent;
+  border:none;color:var(--text-sub);cursor:pointer;transition:all .12s;
+  border-right:1px solid var(--border);
+}
+.seg-btn:last-child{border-right:none;}
+.seg-btn.active{background:var(--accent);color:#fff;}
+
+/* DICE — prominent */
+.dice-btn{
+  width:100%;padding:12px;
+  background:var(--accent);color:#fff;
+  border:none;border-radius:6px;
+  font-size:22px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--sans);font-weight:600;letter-spacing:.04em;
+  transition:opacity .15s;box-shadow:0 2px 6px rgba(232,97,26,.35);
+}
+.dice-btn:hover{opacity:.88;}
+.dice-btn span.dice-label{font-size:14px;letter-spacing:.06em;}
+
+/* custom word panel */
+.section-rule{border:none;border-top:1px solid var(--border);margin:4px 0;}
+.custom-toggle{
+  background:transparent;border:1.5px solid var(--border-strong);border-radius:5px;
+  font-family:var(--sans);font-size:12px;color:var(--text-sub);cursor:pointer;
+  padding:6px 12px;width:100%;text-align:left;transition:background .12s;
+}
+.custom-toggle:hover{background:#f0ede6;}
+.custom-panel{display:none;flex-direction:column;gap:8px;padding:10px;background:#faf8f3;border:1px solid var(--border);border-radius:5px;}
+.custom-panel.open{display:flex;}
+.custom-panel label{font-size:11px;color:var(--text-muted);font-family:var(--sans);letter-spacing:.06em;text-transform:uppercase;}
+.custom-panel input,.custom-panel select{
+  width:100%;padding:6px 9px;font-family:'EB Garamond',Georgia,serif;font-size:15px;
+  border:1.5px solid var(--border-strong);border-radius:4px;background:#fff;color:var(--ink);outline:none;
+}
+.custom-panel input:focus,.custom-panel select:focus{border-color:var(--accent);}
+.custom-panel input[type=text]{font-size:14px;font-family:var(--sans);}
+.subj-picker{display:flex;flex-wrap:wrap;gap:4px;}
+.subj-pick-btn{
+  font-size:10px;padding:3px 8px;border-radius:14px;border:1.5px solid var(--border-strong);
+  background:transparent;color:var(--text-sub);cursor:pointer;font-family:var(--sans);transition:all .12s;
+}
+.subj-pick-btn.active{color:#fff;}
+.add-word-btn{
+  padding:7px 14px;background:var(--accent);color:#fff;border:none;border-radius:4px;
+  font-size:13px;font-family:var(--sans);cursor:pointer;font-weight:500;transition:opacity .12s;
+}
+.add-word-btn:hover{opacity:.85;}
+.custom-words-list{display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto;}
+.custom-word-item{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  font-size:12px;font-family:var(--sans);padding:4px 6px;
+  background:#fff;border:1px solid var(--border);border-radius:3px;
+}
+.custom-word-item .cw-word{font-weight:600;color:var(--ink);}
+.custom-word-item .cw-note{color:var(--text-muted);flex:1;font-style:italic;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:0 2px;}
+.del-btn:hover{color:#b71c1c;}
+.card-counter{font-size:11px;color:var(--text-muted);font-family:var(--sans);text-align:center;}
+/* reveal answer */
+.reveal-btn{
+  width:100%;padding:10px;margin-top:2px;
+  background:transparent;color:var(--accent);
+  border:2px solid var(--accent);border-radius:6px;
+  font-size:13px;font-family:var(--sans);font-weight:600;letter-spacing:.04em;
+  cursor:pointer;transition:all .15s;
+}
+.reveal-btn:hover{background:var(--accent);color:#fff;}
+.reveal-btn:disabled{opacity:.35;cursor:not-allowed;}
+.answer-bar{
+  display:none;padding:10px 13px;border-radius:5px;
+  background:#e6f4ea;color:#1e6e35;
+  font-size:13px;font-family:var(--sans);line-height:1.4;
+  border:1px solid #a8d5b5;
+}
+.answer-bar.show{display:block;}
+/* add-card panel tabs */
+.panel-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.panel-tab{
+  padding:5px 12px;font-size:12px;font-family:var(--sans);background:transparent;
+  border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--text-muted);
+  margin-bottom:-1px;transition:all .12s;
+}
+.panel-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+.tab-pane{display:none;flex-direction:column;gap:8px;}
+.tab-pane.active{display:flex;}
+.custom-cards-list{display:flex;flex-direction:column;gap:4px;max-height:100px;overflow-y:auto;}
+</style>
+</head>
+<body>
+
+<div class="subject-filter" id="subjectFilter"></div>
+
+<div class="main-layout">
+
+  <!-- BOOK -->
+  <div class="book-col">
+    <div class="book-cover" id="bookCover">
+      <div class="cover-top">
+        <div class="penguin-bar"></div>
+        <div class="penguin-oval">
+          <div class="root-type-label" id="rootTypeLabel"></div>
+          <div class="root-main title-state" id="rootWord">ROOT</div>
+        </div>
+      </div>
+      <div class="h-rule"></div>
+      <div class="cover-white">
+        <span class="side-label">Root Words</span>
+        <div class="words-section" id="wordsSection">
+          <div class="title-prompt">Select a key stage and subject filter, then press the dice button to begin</div>
+          <div class="cover-divider" id="initDivider"></div>
+        </div>
+        <span class="side-label flip">Root Words</span>
+      </div>
+      <div class="h-rule"></div>
+      <div class="cover-bottom">
+        <span class="school-text">Kimberley</span>
+        <img src="ks_crest.png" alt="Kimberley School" class="school-logo">
+        <span class="school-text">School</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls-col">
+    <div class="toolbar">
+
+      <div class="toolbar-row">
+        <span class="tb-label">Key stage</span>
+        <div class="seg" id="levelSeg">
+          <button class="seg-btn active" onclick="setLevel('ks3')">KS3</button>
+          <button class="seg-btn" onclick="setLevel('gcse')">GCSE</button>
+          <button class="seg-btn" onclick="setLevel('alevel')">A Level</button>
+        </div>
+      </div>
+
+      <div class="toolbar-row">
+        <span class="tb-label">Display</span>
+        <div class="seg" id="modeSeg">
+          <button class="seg-btn active" onclick="setMode('A')">Reveal words</button>
+          <button class="seg-btn" onclick="setMode('B')">Show all</button>
+        </div>
+      </div>
+
+      <!-- PROMINENT RANDOM BUTTON -->
+      <button class="dice-btn" onclick="pickRandom()" title="Pick a random root">
+        <span style="font-size:26px;">⚄</span>
+        <span class="dice-label">RANDOM ROOT</span>
+      </button>
+
+      <div class="card-counter" id="cardCounter"></div>
+
+      <!-- REVEAL ANSWER -->
+      <button class="reveal-btn" id="revealBtn" onclick="revealAnswer()" disabled>Reveal answer</button>
+      <div class="answer-bar" id="answerBar"></div>
+
+    </div>
+
+    <hr class="section-rule">
+
+    <!-- CUSTOM PANEL -->
+    <button class="custom-toggle" onclick="toggleCustom()" id="customToggleBtn">＋ Customise cards</button>
+    <div class="custom-panel" id="customPanel">
+
+      <div class="panel-tabs">
+        <button class="panel-tab active" onclick="switchTab('word')">Add word to card</button>
+        <button class="panel-tab" onclick="switchTab('card')">Add new card</button>
+      </div>
+
+      <!-- TAB: ADD WORD -->
+      <div class="tab-pane active" id="tabWord">
+        <div>
+          <label>Word</label>
+          <input type="text" id="cwWord" placeholder="e.g. Epinephrine">
+        </div>
+        <div>
+          <label>Definition / note</label>
+          <input type="text" id="cwNote" placeholder="e.g. another name for adrenaline">
+        </div>
+        <div>
+          <label>Part to highlight (the root within the word)</label>
+          <input type="text" id="cwHl" placeholder="e.g. epi">
+        </div>
+        <div>
+          <label>Key stage</label>
+          <select id="cwLevel">
+            <option value="ks3">KS3</option>
+            <option value="gcse" selected>GCSE</option>
+            <option value="alevel">A Level</option>
+          </select>
+        </div>
+        <div>
+          <label>Subject areas</label>
+          <div class="subj-picker" id="subjPicker"></div>
+        </div>
+        <button class="add-word-btn" onclick="addCustomWord()">Add word to this card</button>
+        <div>
+          <label>Words added to this card</label>
+          <div class="custom-words-list" id="customWordsList"></div>
+        </div>
+      </div>
+
+      <!-- TAB: ADD CARD -->
+      <div class="tab-pane" id="tabCard">
+        <div>
+          <label>Root word (e.g. CHRON)</label>
+          <input type="text" id="ncRoot" placeholder="e.g. CHRON">
+        </div>
+        <div>
+          <label>Type</label>
+          <select id="ncType">
+            <option value="prefix">Prefix</option>
+            <option value="root" selected>Root</option>
+            <option value="suffix">Suffix</option>
+          </select>
+        </div>
+        <div>
+          <label>Meaning (e.g. Time)</label>
+          <input type="text" id="ncMeaning" placeholder="e.g. Time">
+        </div>
+        <div>
+          <label>Origin (e.g. Greek: chronos)</label>
+          <input type="text" id="ncOrigin" placeholder="e.g. Greek: chronos">
+        </div>
+        <button class="add-word-btn" onclick="addCustomCard()">Create card</button>
+        <div>
+          <label>Your custom cards</label>
+          <div class="custom-cards-list" id="customCardsList"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+const PALETTE=['#E8611A','#3C7A3C','#5B3A8A','#C4302B','#1A5F8A'];
+const LO={ks3:0,gcse:1,alevel:2};
+
+const SUBJECT_COL={
+  'Science':'#2E7D32','English/Media':'#6A1B9A','History':'#A1432D',
+  'French':'#0277BD','Spanish':'#C62828','Maths':'#B8860B','Geography':'#00838F',
+  'RS':'#5D4037','PE':'#EF6C00','Music & Drama':'#7B1FA2','DT':'#455A64',
+  'H&SC':'#AD1457','IT':'#00695C','Business':'#E65100'
+};
+const SUBJECT_ABBR={
+  'Science':'Sci','English/Media':'Eng','History':'Hist','French':'Fr','Spanish':'Sp',
+  'Maths':'Maths','Geography':'Geog','RS':'RS','PE':'PE','Music & Drama':'Mus/Dr',
+  'DT':'DT','H&SC':'H&SC','IT':'IT','Business':'Bus'
+};
+const ALL_SUBJECTS=Object.keys(SUBJECT_COL);
+
+const ALL_CARDS=[
+  // ── QUANTITY / NUMBER ──
+  {root:'AER',type:'root',meaning:'Air',origin:'Greek: aer',colour:0,synonyms:['air','atmosphere','gas','wind'],
+   words:[
+    {word:'Aerate',note:'to introduce air into something',hl:'Aer',level:'ks3',subj:['Science']},
+    {word:'Aeroplane',note:'aircraft that flies through air',hl:'Aer',level:'ks3',subj:['Science','English/Media']},
+    {word:'Aerosol',note:'tiny particles suspended in air',hl:'Aer',level:'ks3',subj:['Science']},
+    {word:'Aerobic',note:'requiring oxygen (air) to live or exercise',hl:'Aer',level:'gcse',subj:['Science','PE']},
+    {word:'Aerodynamic',note:'shaped to move easily through air',hl:'Aer',level:'gcse',subj:['Science','PE','DT']},
+    {word:'Anaerobic',note:'exercise or respiration without oxygen (air)',hl:'aer',level:'gcse',subj:['Science','PE']},
+  ]},
+  {root:'BI',type:'prefix',meaning:'Two',origin:'Latin: bis',colour:1,synonyms:['two','double','twice','dual','pair'],
+   words:[
+    {word:'Bicycle',note:'two-wheeled vehicle',hl:'Bi',level:'ks3',subj:['English/Media','PE']},
+    {word:'Bilingual',note:'speaking two languages',hl:'Bi',level:'ks3',subj:['French','Spanish','English/Media']},
+    {word:'Binocular',note:'instrument using two eyes',hl:'Bi',level:'ks3',subj:['Science']},
+    {word:'Bisect',note:'to cut into two equal parts',hl:'Bi',level:'gcse',subj:['Maths']},
+    {word:'Bipolar',note:'having two opposite poles',hl:'Bi',level:'gcse',subj:['Science']},
+    {word:'Biceps',note:'muscle with two attachment points',hl:'Bi',level:'gcse',subj:['Science','PE']},
+    {word:'Binomial',note:'expression or name with two parts',hl:'Bi',level:'alevel',subj:['Maths','Science']},
+  ]},
+  {root:'MONO',type:'prefix',meaning:'One',origin:'Greek: monos',colour:2,synonyms:['one','single','sole','alone','only'],
+   words:[
+    {word:'Monotone',note:'a single, unchanging tone',hl:'Mono',level:'ks3',subj:['English/Media','Music & Drama']},
+    {word:'Monologue',note:'speech by one person',hl:'Mono',level:'ks3',subj:['English/Media','Music & Drama']},
+    {word:'Monopoly',note:'control by a single company',hl:'Mono',level:'ks3',subj:['History','Business']},
+    {word:'Monochrome',note:'using a single colour',hl:'Mono',level:'gcse',subj:['English/Media']},
+    {word:'Monosaccharide',note:'simplest single sugar unit',hl:'Mono',level:'gcse',subj:['Science','H&SC']},
+    {word:'Monomer',note:'a single unit that joins to form a polymer',hl:'Mono',level:'alevel',subj:['Science']},
+  ]},
+  {root:'POLY',type:'prefix',meaning:'Many',origin:'Greek: polys',colour:3,synonyms:['many','several','multiple','numerous'],
+   words:[
+    {word:'Polygon',note:'a shape with many sides',hl:'Poly',level:'ks3',subj:['Maths']},
+    {word:'Polystyrene',note:'a lightweight polymer made of many styrene units',hl:'Poly',level:'ks3',subj:['Science','DT']},
+    {word:'Polyglot',note:'a person who speaks many languages',hl:'Poly',level:'gcse',subj:['French','Spanish']},
+    {word:'Polymer',note:'large molecule made of many repeating units, used in plastics',hl:'Poly',level:'gcse',subj:['Science','DT']},
+    {word:'Polysaccharide',note:'carbohydrate made of many sugar units',hl:'Poly',level:'alevel',subj:['Science','H&SC']},
+    {word:'Polymerase',note:'enzyme that builds many-unit DNA or RNA chains',hl:'Poly',level:'alevel',subj:['Science']},
+  ]},
+  {root:'MULTI',type:'prefix',meaning:'Many',origin:'Latin: multus',colour:4,synonyms:['many','multiple','several','more than one'],
+   words:[
+    {word:'Multiply',note:'to increase many times over',hl:'Multi',level:'ks3',subj:['Maths']},
+    {word:'Multicultural',note:'involving many cultures',hl:'Multi',level:'ks3',subj:['History','RS']},
+    {word:'Multitask',note:'to do many things at once',hl:'Multi',level:'ks3',subj:['English/Media','Business']},
+    {word:'Multicellular',note:'made up of many cells',hl:'Multi',level:'gcse',subj:['Science']},
+    {word:'Multimedia',note:'using many forms of media together',hl:'Multi',level:'gcse',subj:['English/Media','IT']},
+  ]},
+  {root:'SEMI',type:'prefix',meaning:'Half',origin:'Latin: semi',colour:0,synonyms:['half','partial','partly','incomplete'],
+   words:[
+    {word:'Semicircle',note:'exactly half a circle',hl:'Semi',level:'ks3',subj:['Maths']},
+    {word:'Semifinal',note:'the round immediately before the final',hl:'Semi',level:'ks3',subj:['PE','English/Media']},
+    {word:'Semicolon',note:'punctuation mark halfway between comma and full stop',hl:'Semi',level:'ks3',subj:['English/Media']},
+    {word:'Semiconductor',note:'material that partly conducts electricity — key in IT hardware',hl:'Semi',level:'gcse',subj:['Science','IT']},
+    {word:'Semipermeable',note:'allowing only some substances to pass through',hl:'Semi',level:'gcse',subj:['Science']},
+    {word:'Seminiferous',note:'tubules that are partly responsible for carrying sperm',hl:'Semi',level:'alevel',subj:['Science']},
+  ]},
+  {root:'MICRO',type:'prefix',meaning:'Small',origin:'Greek: mikros',colour:1,synonyms:['small','tiny','minute','microscopic'],
+   words:[
+    {word:'Microscope',note:'instrument for seeing very small things',hl:'Micro',level:'ks3',subj:['Science']},
+    {word:'Microwave',note:'a very short electromagnetic wave',hl:'Micro',level:'ks3',subj:['Science']},
+    {word:'Microphone',note:'device that picks up small sounds',hl:'Micro',level:'ks3',subj:['Science','Music & Drama']},
+    {word:'Microorganism',note:'a very small living thing — important for food hygiene',hl:'Micro',level:'gcse',subj:['Science','H&SC']},
+    {word:'Microhabitat',note:'a small, specific living environment',hl:'Micro',level:'gcse',subj:['Science','Geography']},
+    {word:'Microprocessor',note:'a very small processing chip — the brain of a computer',hl:'Micro',level:'gcse',subj:['IT']},
+    {word:'Microvilli',note:'tiny finger-like projections that increase surface area',hl:'Micro',level:'alevel',subj:['Science']},
+  ]},
+  {root:'MEGA / MAGNI',type:'prefix',meaning:'Large / Great',origin:'Greek/Latin: megas / magnus',colour:2,synonyms:['large','great','huge','enormous','big'],
+   words:[
+    {word:'Magnify',note:'to make something appear larger',hl:'Magni',level:'ks3',subj:['Science']},
+    {word:'Magnificent',note:'impressively large or great',hl:'Magni',level:'ks3',subj:['English/Media']},
+    {word:'Megacity',note:'an extremely large city',hl:'Mega',level:'ks3',subj:['Geography']},
+    {word:'Megabyte',note:'a large unit of digital data storage',hl:'Mega',level:'ks3',subj:['IT']},
+    {word:'Magnitude',note:'the great size or extent of something',hl:'Magni',level:'gcse',subj:['Science','Maths']},
+  ]},
+  // ── POSITION / DIRECTION ──
+  {root:'SUB',type:'prefix',meaning:'Below',origin:'Latin: sub',colour:3,synonyms:['below','under','beneath','lower','less than'],
+   words:[
+    {word:'Submarine',note:'vessel that travels below the sea',hl:'Sub',level:'ks3',subj:['English/Media']},
+    {word:'Subtract',note:'to take a value away from below a total',hl:'Sub',level:'ks3',subj:['Maths']},
+    {word:'Substitute',note:'a player who comes on below/in place of another',hl:'Sub',level:'ks3',subj:['PE']},
+    {word:'Substructure',note:'the supporting foundations beneath a building',hl:'Sub',level:'ks3',subj:['DT']},
+    {word:'Subsoil',note:'the layer of soil below the surface',hl:'Sub',level:'gcse',subj:['Geography','Science']},
+    {word:'Substrate',note:'the substance on which an enzyme acts',hl:'Sub',level:'gcse',subj:['Science']},
+    {word:'Subdirectory',note:'a folder stored below another in a file system',hl:'Sub',level:'gcse',subj:['IT']},
+  ]},
+  {root:'SUPER',type:'prefix',meaning:'Above / Beyond',origin:'Latin: super',colour:4,synonyms:['above','over','beyond','superior','more than'],
+   words:[
+    {word:'Superficial',note:'on the surface; not deep',hl:'Super',level:'ks3',subj:['English/Media']},
+    {word:'Supernatural',note:'beyond what the natural world can explain',hl:'Super',level:'ks3',subj:['English/Media','RS']},
+    {word:'Supervise',note:'to oversee from above',hl:'Super',level:'ks3',subj:['English/Media','Business']},
+    {word:'Supersonic',note:'faster than the speed of sound',hl:'Super',level:'gcse',subj:['Science']},
+    {word:'Supernatant',note:'the liquid layer above a centrifuged pellet',hl:'Super',level:'alevel',subj:['Science']},
+  ]},
+  {root:'INTER',type:'prefix',meaning:'Between',origin:'Latin: inter',colour:0,synonyms:['between','among','mutual','shared'],
+   words:[
+    {word:'International',note:'between two or more nations',hl:'Inter',level:'ks3',subj:['Geography','History','PE']},
+    {word:'Interrupt',note:'to break into something between events',hl:'Inter',level:'ks3',subj:['English/Media']},
+    {word:'Internet',note:'a network connecting computers between locations worldwide',hl:'Inter',level:'ks3',subj:['IT']},
+    {word:'Interface',note:'a point between two systems where they interact',hl:'Inter',level:'gcse',subj:['IT','DT']},
+    {word:'Interspecific',note:'competition or interaction between different species',hl:'Inter',level:'gcse',subj:['Science']},
+    {word:'Interphase',note:'the stage between cell divisions',hl:'Inter',level:'alevel',subj:['Science']},
+  ]},
+  {root:'INTRA',type:'prefix',meaning:'Within',origin:'Latin: intra',colour:1,synonyms:['within','inside','internal','inner'],
+   words:[
+    {word:'Intranet',note:'a private network within an organisation',hl:'Intra',level:'gcse',subj:['IT','Business']},
+    {word:'Intravenous',note:'administered directly within a vein',hl:'Intra',level:'gcse',subj:['Science','H&SC']},
+    {word:'Intraspecific',note:'competition within the same species',hl:'Intra',level:'gcse',subj:['Science']},
+    {word:'Intracellular',note:'occurring within the cell',hl:'Intra',level:'alevel',subj:['Science']},
+  ]},
+  {root:'HYPER',type:'prefix',meaning:'Above / Excessive',origin:'Greek: hyper',colour:2,synonyms:['above','over','excessive','too much','extreme'],
+   words:[
+    {word:'Hyperactive',note:'excessively active',hl:'Hyper',level:'ks3',subj:['English/Media']},
+    {word:'Hyperbole',note:'deliberate and obvious exaggeration',hl:'Hyper',level:'ks3',subj:['English/Media']},
+    {word:'Hyperlink',note:'a link in a document that connects to another location',hl:'Hyper',level:'ks3',subj:['IT']},
+    {word:'Hypertension',note:'abnormally high blood pressure',hl:'Hyper',level:'gcse',subj:['Science','H&SC']},
+    {word:'Hyperglycaemia',note:'excessively high blood glucose concentration',hl:'Hyper',level:'gcse',subj:['Science','H&SC']},
+  ]},
+  {root:'HYPO',type:'prefix',meaning:'Below / Under',origin:'Greek: hypo',colour:3,synonyms:['below','under','beneath','less than','deficient'],
+   words:[
+    {word:'Hypothesis',note:'a testable suggestion put forward before proof',hl:'Hypo',level:'ks3',subj:['Science']},
+    {word:'Hypodermic',note:'administered beneath the skin',hl:'Hypo',level:'gcse',subj:['Science','H&SC']},
+    {word:'Hypotension',note:'abnormally low blood pressure',hl:'Hypo',level:'gcse',subj:['Science','H&SC']},
+    {word:'Hypoglycaemia',note:'abnormally low blood glucose',hl:'Hypo',level:'gcse',subj:['Science','PE','H&SC']},
+    {word:'Hypothalamus',note:'brain region below the thalamus controlling homeostasis',hl:'Hypo',level:'alevel',subj:['Science']},
+  ]},
+  {root:'EPI',type:'prefix',meaning:'Upon / Over',origin:'Greek: epi',colour:4,synonyms:['upon','over','on top of','above'],
+   words:[
+    {word:'Epidemic',note:'a disease spreading rapidly across a population',hl:'Epi',level:'ks3',subj:['Science','History']},
+    {word:'Epicentre',note:'the point on the surface above an earthquake',hl:'Epi',level:'ks3',subj:['Geography']},
+    {word:'Epidermis',note:'the outer layer upon the skin',hl:'Epi',level:'gcse',subj:['Science']},
+    {word:'Epiglottis',note:'the flap that closes over the airway when swallowing',hl:'Epi',level:'gcse',subj:['Science']},
+    {word:'Epigenetics',note:'changes in gene expression without altering DNA sequence',hl:'Epi',level:'alevel',subj:['Science']},
+  ]},
+  {root:'PERI',type:'prefix',meaning:'Around',origin:'Greek: peri',colour:0,synonyms:['around','surrounding','enclosing','near'],
+   words:[
+    {word:'Perimeter',note:'the distance measured around a shape or sports pitch boundary',hl:'Peri',level:'ks3',subj:['Maths','PE']},
+    {word:'Peripheral',note:'at the edges; around the outside; also an external device connected to a computer',hl:'Peri',level:'gcse',subj:['English/Media','IT']},
+    {word:'Peristalsis',note:'wave-like muscle contractions around the gut wall',hl:'Peri',level:'gcse',subj:['Science','H&SC']},
+    {word:'Periosteum',note:'membrane surrounding bone',hl:'Peri',level:'alevel',subj:['Science','PE']},
+  ]},
+  {root:'ENDO',type:'prefix',meaning:'Within',origin:'Greek: endon',colour:1,synonyms:['within','inside','internal','inner'],
+   words:[
+    {word:'Endoskeleton',note:'a skeleton contained within the body',hl:'Endo',level:'ks3',subj:['Science','PE']},
+    {word:'Endoscope',note:'instrument for looking within the body',hl:'Endo',level:'gcse',subj:['Science','H&SC']},
+    {word:'Endocrine',note:'glands that secrete hormones within the bloodstream',hl:'Endo',level:'gcse',subj:['Science','H&SC']},
+    {word:'Endothermic',note:'a reaction that absorbs heat from surroundings',hl:'Endo',level:'gcse',subj:['Science']},
+    {word:'Endocytosis',note:'taking substances into the cell by engulfing them',hl:'Endo',level:'alevel',subj:['Science']},
+  ]},
+  {root:'EXO',type:'prefix',meaning:'Outside / Beyond',origin:'Greek: exo',colour:2,synonyms:['outside','external','outer','beyond'],
+   words:[
+    {word:'Exoskeleton',note:'a hard skeleton on the outside of the body',hl:'Exo',level:'ks3',subj:['Science']},
+    {word:'Exotic',note:'from outside one\'s own country or region',hl:'Exo',level:'ks3',subj:['Geography','English/Media']},
+    {word:'Exothermic',note:'a reaction that releases heat to the surroundings',hl:'Exo',level:'gcse',subj:['Science']},
+    {word:'Exocytosis',note:'releasing substances to the outside of the cell',hl:'Exo',level:'alevel',subj:['Science']},
+  ]},
+  // ── BODY / ANATOMY ──
+  {root:'CARDI',type:'root',meaning:'Heart',origin:'Greek: kardia',colour:3,synonyms:['heart','cardiac','pulse'],
+   words:[
+    {word:'Cardiac',note:'relating to the heart',hl:'Card',level:'ks3',subj:['Science','PE']},
+    {word:'Cardio',note:'exercise that strengthens the heart and lungs',hl:'Cardio',level:'ks3',subj:['PE']},
+    {word:'Cardiology',note:'the study of the heart',hl:'Cardi',level:'gcse',subj:['Science','H&SC']},
+    {word:'Cardiovascular',note:'relating to the heart and blood vessels',hl:'Cardi',level:'gcse',subj:['Science','PE','H&SC']},
+    {word:'Tachycardia',note:'an abnormally fast heart rate',hl:'cardia',level:'alevel',subj:['Science']},
+    {word:'Electrocardiogram',note:'a recording of the heart\'s electrical activity',hl:'cardi',level:'alevel',subj:['Science']},
+  ]},
+  {root:'DERM',type:'root',meaning:'Skin',origin:'Greek: derma',colour:4,synonyms:['skin','outer layer','covering'],
+   words:[
+    {word:'Dermatitis',note:'inflammation of the skin',hl:'Derm',level:'ks3',subj:['Science','H&SC']},
+    {word:'Dermatology',note:'the branch of medicine dealing with skin',hl:'Derm',level:'gcse',subj:['Science','H&SC']},
+    {word:'Epidermis',note:'the outermost layer of skin',hl:'derm',level:'gcse',subj:['Science']},
+    {word:'Hypodermic',note:'beneath the skin (as in a needle)',hl:'derm',level:'gcse',subj:['Science']},
+    {word:'Endoderm',note:'the inner skin layer in early embryo development',hl:'derm',level:'alevel',subj:['Science']},
+  ]},
+  {root:'NEUR',type:'root',meaning:'Nerve',origin:'Greek: neuron',colour:0,synonyms:['nerve','nervous','neural','signal'],
+   words:[
+    {word:'Neuron',note:'a specialised nerve cell',hl:'Neur',level:'gcse',subj:['Science']},
+    {word:'Neurology',note:'the study of the nervous system',hl:'Neur',level:'gcse',subj:['Science','H&SC']},
+    {word:'Neurotransmitter',note:'chemical that carries signals across a synapse',hl:'Neur',level:'gcse',subj:['Science']},
+    {word:'Neuropeptide',note:'small protein acting on nerve cells',hl:'Neur',level:'alevel',subj:['Science']},
+    {word:'Neuromuscular junction',note:'the point where a nerve meets a muscle',hl:'Neur',level:'alevel',subj:['Science','PE']},
+  ]},
+  {root:'MYO',type:'root',meaning:'Muscle',origin:'Greek: mys',colour:1,synonyms:['muscle','muscular','contractile'],
+   words:[
+    {word:'Myocardium',note:'the muscular wall of the heart',hl:'Myo',level:'gcse',subj:['Science']},
+    {word:'Myofibril',note:'tiny contractile fibre within muscle cells',hl:'Myo',level:'alevel',subj:['Science','PE']},
+    {word:'Myosin',note:'protein filament responsible for muscle contraction',hl:'Myo',level:'alevel',subj:['Science','PE']},
+    {word:'Myopathy',note:'a disease or disorder of muscle tissue',hl:'Myo',level:'alevel',subj:['Science']},
+  ]},
+  {root:'HAEM',type:'root',meaning:'Blood',origin:'Greek: haima',colour:2,synonyms:['blood','bleeding','sanguine'],
+   words:[
+    {word:'Haemorrhage',note:'heavy or uncontrolled bleeding',hl:'Haem',level:'ks3',subj:['Science','H&SC']},
+    {word:'Haemoglobin',note:'protein in red blood cells that carries oxygen',hl:'Haem',level:'gcse',subj:['Science','PE']},
+    {word:'Haemophilia',note:'inherited disorder preventing normal blood clotting',hl:'Haem',level:'gcse',subj:['Science']},
+    {word:'Haematology',note:'the study of blood and blood disorders',hl:'Haem',level:'alevel',subj:['Science']},
+  ]},
+  {root:'GASTR',type:'root',meaning:'Stomach',origin:'Greek: gaster',colour:3,synonyms:['stomach','gut','belly','digestive'],
+   words:[
+    {word:'Gastric',note:'relating to the stomach',hl:'Gastr',level:'gcse',subj:['Science','H&SC']},
+    {word:'Gastroenteritis',note:'inflammation of the stomach and intestines',hl:'Gastr',level:'gcse',subj:['Science','H&SC']},
+    {word:'Gastroscopy',note:'visual examination of the inside of the stomach',hl:'Gastr',level:'gcse',subj:['Science']},
+    {word:'Gastropod',note:'mollusc that moves on a stomach-like foot (e.g. snail)',hl:'Gastr',level:'alevel',subj:['Science']},
+  ]},
+  {root:'PULMO',type:'root',meaning:'Lung',origin:'Latin: pulmo',colour:4,synonyms:['lung','pulmonary','respiratory','breathing'],
+   words:[
+    {word:'Pulmonary',note:'relating to the lungs',hl:'Pulmo',level:'gcse',subj:['Science','PE']},
+    {word:'Pulmonary artery',note:'vessel carrying deoxygenated blood to the lungs',hl:'Pulmo',level:'gcse',subj:['Science']},
+    {word:'Pulmonary vein',note:'vessel returning oxygenated blood from the lungs',hl:'Pulmo',level:'gcse',subj:['Science']},
+    {word:'Pulmonary embolism',note:'a blockage in the lung\'s blood vessels',hl:'Pulmo',level:'alevel',subj:['Science']},
+  ]},
+  {root:'OSS / OSTEO',type:'root',meaning:'Bone',origin:'Latin/Greek: os / osteon',colour:0,synonyms:['bone','skeletal','calcified','hard'],
+   words:[
+    {word:'Ossify',note:'to harden into bone',hl:'Oss',level:'gcse',subj:['Science']},
+    {word:'Osteoporosis',note:'a condition causing weakening and thinning of bones',hl:'Osteo',level:'gcse',subj:['Science','PE','H&SC']},
+    {word:'Ossification',note:'the process by which bone tissue forms',hl:'Ossif',level:'alevel',subj:['Science']},
+    {word:'Osteoblast',note:'a cell that builds and deposits new bone',hl:'Osteo',level:'alevel',subj:['Science']},
+  ]},
+  // ── COLOUR ──
+  {root:'CHLOR',type:'root',meaning:'Green',origin:'Greek: chloros',colour:1,synonyms:['green','chlorophyll','verdant'],
+   words:[
+    {word:'Chlorophyll',note:'the green pigment that captures light in plants',hl:'Chlor',level:'ks3',subj:['Science']},
+    {word:'Chloride',note:'compound containing chlorine, a greenish gas',hl:'Chlor',level:'ks3',subj:['Science']},
+    {word:'Chloroplast',note:'organelle containing green pigment in plant cells',hl:'Chlor',level:'gcse',subj:['Science']},
+    {word:'Chlorosis',note:'yellowing of leaves due to lack of green pigment',hl:'Chlor',level:'gcse',subj:['Science']},
+  ]},
+  {root:'ERYTHRO',type:'root',meaning:'Red',origin:'Greek: erythros',colour:2,synonyms:['red','crimson','scarlet'],
+   words:[
+    {word:'Erythrocyte',note:'a red blood cell',hl:'Erythro',level:'gcse',subj:['Science']},
+    {word:'Erythropoietin',note:'hormone that stimulates red blood cell production',hl:'Erythro',level:'alevel',subj:['Science','PE']},
+    {word:'Erythromycin',note:'a red-pigmented antibiotic',hl:'Erythro',level:'alevel',subj:['Science']},
+  ]},
+  {root:'LEUC',type:'root',meaning:'White',origin:'Greek: leukos',colour:3,synonyms:['white','pale','colourless','clear'],
+   words:[
+    {word:'Leucocyte',note:'a white blood cell',hl:'Leuc',level:'gcse',subj:['Science']},
+    {word:'Leukaemia',note:'a cancer of the white blood cells',hl:'Leuk',level:'gcse',subj:['Science']},
+    {word:'Leucoplast',note:'colourless organelle in plant cells for storing starch',hl:'Leuc',level:'alevel',subj:['Science']},
+  ]},
+  {root:'MELAN',type:'root',meaning:'Black / Dark',origin:'Greek: melas',colour:4,synonyms:['black','dark','pigmented','dusky'],
+   words:[
+    {word:'Melanin',note:'dark pigment found in skin, hair and eyes',hl:'Melan',level:'ks3',subj:['Science']},
+    {word:'Melanoma',note:'a malignant skin cancer arising from dark pigment cells',hl:'Melan',level:'gcse',subj:['Science','H&SC']},
+    {word:'Melanocyte',note:'cell in the skin that produces dark pigment',hl:'Melan',level:'alevel',subj:['Science']},
+  ]},
+  {root:'CYAN',type:'root',meaning:'Blue',origin:'Greek: kyanos',colour:4,synonyms:['blue','azure','blue-green'],
+   words:[
+    {word:'Cyanide',note:'toxic compound named after its blue-producing properties',hl:'Cyan',level:'ks3',subj:['Science']},
+    {word:'Cyanosis',note:'bluish discolouration of skin due to lack of oxygen',hl:'Cyan',level:'gcse',subj:['Science','H&SC']},
+    {word:'Cyanobacteria',note:'blue-green photosynthetic bacteria',hl:'Cyan',level:'alevel',subj:['Science']},
+  ]},
+  // ── SUBSTANCE / MATTER ──
+  {root:'LIP',type:'root',meaning:'Fat',origin:'Greek: lipos',colour:0,synonyms:['fat','lipid','oily','fatty'],
+   words:[
+    {word:'Lipid',note:'a fat or fat-like biological molecule',hl:'Lip',level:'gcse',subj:['Science','PE','H&SC']},
+    {word:'Lipase',note:'enzyme that breaks down fat molecules',hl:'Lip',level:'gcse',subj:['Science']},
+    {word:'Lipoprotein',note:'a molecule that combines fat with protein',hl:'Lip',level:'gcse',subj:['Science']},
+    {word:'Adipose',note:'relating to body fat tissue',hl:'ip',level:'gcse',subj:['Science','PE']},
+    {word:'Lipolysis',note:'the enzymatic breakdown of fat',hl:'Lip',level:'alevel',subj:['Science']},
+  ]},
+  {root:'GLUCO / GLYC',type:'root',meaning:'Sugar / Sweet',origin:'Greek: glykys',colour:1,synonyms:['sugar','sweet','glucose','carbohydrate'],
+   words:[
+    {word:'Glucose',note:'the primary sugar used in cellular respiration',hl:'Gluco',level:'ks3',subj:['Science','PE']},
+    {word:'Glycogen',note:'stored form of glucose in animal liver and muscle',hl:'Glyco',level:'gcse',subj:['Science','PE']},
+    {word:'Glycolysis',note:'the breakdown of glucose in respiration',hl:'Glyco',level:'gcse',subj:['Science']},
+    {word:'Glycoprotein',note:'protein with sugar chains attached to the surface',hl:'Glyco',level:'alevel',subj:['Science']},
+    {word:'Gluconeogenesis',note:'production of new glucose from non-sugar molecules',hl:'Gluco',level:'alevel',subj:['Science']},
+  ]},
+  {root:'AQUA',type:'root',meaning:'Water',origin:'Latin: aqua',colour:2,synonyms:['water','aquatic','watery','fluid'],
+   words:[
+    {word:'Aquatic',note:'living or found in water (also a category of sport)',hl:'Aqua',level:'ks3',subj:['Science','PE']},
+    {word:'Aqueduct',note:'a channel that carries water across a distance',hl:'Aque',level:'ks3',subj:['History','DT']},
+    {word:'Aquarium',note:'a tank of water for keeping aquatic animals',hl:'Aqua',level:'ks3',subj:['Science']},
+    {word:'Aquifer',note:'an underground rock layer that holds water',hl:'Aqui',level:'gcse',subj:['Geography']},
+    {word:'Aqueous',note:'dissolved in or relating to water',hl:'Aque',level:'gcse',subj:['Science']},
+  ]},
+  // ── PROCESS / ACTION ──
+  {root:'LYSIS',type:'suffix',meaning:'Breaking down',origin:'Greek: lysis',colour:4,synonyms:['breakdown','split','dissolve','separate','decompose'],
+   words:[
+    {word:'Dialysis',note:'filtering waste from blood by selective breakdown',hl:'lysis',level:'gcse',subj:['Science','H&SC']},
+    {word:'Hydrolysis',note:'breaking chemical bonds using water',hl:'lysis',level:'gcse',subj:['Science']},
+    {word:'Electrolysis',note:'splitting compounds using electrical current',hl:'lysis',level:'gcse',subj:['Science']},
+    {word:'Glycolysis',note:'the breakdown of glucose in respiration',hl:'lysis',level:'gcse',subj:['Science','PE']},
+    {word:'Haemolysis',note:'the breakdown of red blood cells',hl:'lysis',level:'alevel',subj:['Science']},
+    {word:'Photolysis',note:'splitting of water molecules using light energy',hl:'lysis',level:'alevel',subj:['Science']},
+  ]},
+  {root:'PHAG',type:'root',meaning:'Eat / Engulf',origin:'Greek: phagein',colour:0,synonyms:['eat','engulf','consume','ingest','devour'],
+   words:[
+    {word:'Phagocyte',note:'a white blood cell that engulfs and eats pathogens',hl:'Phago',level:'gcse',subj:['Science','H&SC']},
+    {word:'Phagocytosis',note:'the process of a cell engulfing solid particles',hl:'Phago',level:'gcse',subj:['Science']},
+    {word:'Macrophage',note:'a large cell that eats pathogens and dead material',hl:'phage',level:'alevel',subj:['Science']},
+    {word:'Bacteriophage',note:'a virus that infects and destroys bacteria',hl:'phage',level:'alevel',subj:['Science']},
+  ]},
+  {root:'TROPH',type:'suffix',meaning:'Feed / Nourish',origin:'Greek: trophe',colour:1,synonyms:['feed','nourish','nutrition','food','energy'],
+   words:[
+    {word:'Autotroph',note:'an organism that makes its own food from simple substances',hl:'troph',level:'gcse',subj:['Science']},
+    {word:'Heterotroph',note:'an organism that obtains food by eating others',hl:'troph',level:'gcse',subj:['Science']},
+    {word:'Eutrophication',note:'over-enrichment of a water body with nutrients',hl:'troph',level:'gcse',subj:['Science','Geography']},
+    {word:'Trophic level',note:'the feeding level an organism occupies in a food chain',hl:'troph',level:'gcse',subj:['Science']},
+    {word:'Hypertrophy',note:'excessive growth of tissue (e.g. muscle) due to over-nourishment',hl:'trophy',level:'alevel',subj:['Science','PE']},
+  ]},
+  {root:'TROP',type:'suffix',meaning:'Turning / Response',origin:'Greek: trope',colour:2,synonyms:['turning','response','direction','growth toward'],
+   words:[
+    {word:'Phototropism',note:'growth of a plant turning toward light',hl:'trop',level:'gcse',subj:['Science']},
+    {word:'Gravitropism',note:'growth turning in response to gravity',hl:'trop',level:'gcse',subj:['Science']},
+    {word:'Geotropism',note:'growth turning in response to the Earth\'s pull',hl:'trop',level:'gcse',subj:['Science']},
+    {word:'Thigmotropism',note:'growth turning in response to touch',hl:'trop',level:'alevel',subj:['Science']},
+    {word:'Chemotropism',note:'growth turning in response to a chemical stimulus',hl:'trop',level:'alevel',subj:['Science']},
+  ]},
+  {root:'SPIR',type:'root',meaning:'Breathe',origin:'Latin: spirare',colour:3,synonyms:['breathe','breath','air','respire'],
+   words:[
+    {word:'Inspire',note:'to breathe in (also: to fill with motivation)',hl:'spir',level:'ks3',subj:['English/Media']},
+    {word:'Conspiracy',note:'a group breathing together in secret',hl:'spir',level:'ks3',subj:['English/Media']},
+    {word:'Respiration',note:'the process of releasing energy from glucose using oxygen',hl:'spir',level:'gcse',subj:['Science','PE']},
+    {word:'Transpiration',note:'the loss of water vapour from plant leaves',hl:'spir',level:'gcse',subj:['Science']},
+    {word:'Spirometer',note:'instrument for measuring the volume of breath',hl:'Spiro',level:'gcse',subj:['Science','PE']},
+    {word:'Spiracle',note:'a small breathing hole found in insects',hl:'Spir',level:'alevel',subj:['Science']},
+  ]},
+  {root:'SECT',type:'root',meaning:'Cut',origin:'Latin: secare',colour:4,synonyms:['cut','divide','slice','section','separate'],
+   words:[
+    {word:'Dissect',note:'to cut apart a specimen for examination',hl:'sect',level:'ks3',subj:['Science']},
+    {word:'Bisect',note:'to cut something into two equal halves',hl:'sect',level:'ks3',subj:['Maths']},
+    {word:'Section',note:'a part that has been cut from a whole',hl:'Sect',level:'ks3',subj:['English/Media','DT']},
+    {word:'Transect',note:'a line cut through an area for ecological sampling',hl:'sect',level:'gcse',subj:['Science']},
+    {word:'Microtome',note:'an instrument that cuts very thin sections for microscopy',hl:'tom',level:'alevel',subj:['Science']},
+  ]},
+  // ── LIFE / ECOLOGY ──
+  {root:'ECO',type:'root',meaning:'Home / Environment',origin:'Greek: oikos',colour:0,synonyms:['home','environment','habitat','house','natural world'],
+   words:[
+    {word:'Ecology',note:'the study of living things in their natural environment',hl:'Eco',level:'ks3',subj:['Science']},
+    {word:'Ecosystem',note:'all the living things and their environment in one area',hl:'Eco',level:'ks3',subj:['Science','Geography']},
+    {word:'Economy',note:'the management of the resources of a community',hl:'Eco',level:'ks3',subj:['History','Business']},
+    {word:'Ecotourism',note:'responsible travel that protects natural environments',hl:'Eco',level:'gcse',subj:['Geography']},
+  ]},
+  {root:'AUTO',type:'prefix',meaning:'Self',origin:'Greek: autos',colour:1,synonyms:['self','own','independent','automatic'],
+   words:[
+    {word:'Automatic',note:'working by itself without human control',hl:'Auto',level:'ks3',subj:['English/Media','DT']},
+    {word:'Autobiography',note:'the story of one\'s own life written by oneself',hl:'Auto',level:'ks3',subj:['English/Media']},
+    {word:'Automation',note:'using machines to do tasks automatically without human input',hl:'Auto',level:'ks3',subj:['DT','Business','IT']},
+    {word:'Autotroph',note:'an organism that feeds itself by making its own food',hl:'Auto',level:'gcse',subj:['Science']},
+    {word:'Autoimmune',note:'when the immune system attacks its own body tissues',hl:'Auto',level:'gcse',subj:['Science']},
+  ]},
+  {root:'SYN / SYM',type:'prefix',meaning:'Together / With',origin:'Greek: syn',colour:2,synonyms:['together','with','combined','joined','shared'],
+   words:[
+    {word:'Symmetry',note:'equal and balanced on both sides',hl:'Sym',level:'ks3',subj:['Maths']},
+    {word:'Symphony',note:'instruments sounding together',hl:'Sym',level:'ks3',subj:['Music & Drama']},
+    {word:'Synthesis',note:'combining parts together to make something new',hl:'Syn',level:'gcse',subj:['Science']},
+    {word:'Synapse',note:'the junction where nerve signals pass between cells',hl:'Syn',level:'gcse',subj:['Science']},
+    {word:'Symbiosis',note:'two organisms living together in close association',hl:'Sym',level:'gcse',subj:['Science']},
+    {word:'Synchronise',note:'to make things happen together at the same time',hl:'Syn',level:'gcse',subj:['IT','Business']},
+  ]},
+  {root:'PARA',type:'prefix',meaning:'Alongside / Beside',origin:'Greek: para',colour:3,synonyms:['alongside','beside','near','beyond','similar to'],
+   words:[
+    {word:'Parallel',note:'lines running alongside each other; also parallel processing in computing',hl:'Para',level:'ks3',subj:['Maths','IT']},
+    {word:'Paralympics',note:'games held alongside the Olympics',hl:'Para',level:'ks3',subj:['English/Media','PE']},
+    {word:'Parasite',note:'an organism living alongside and at the expense of a host',hl:'Para',level:'ks3',subj:['Science']},
+    {word:'Paramedic',note:'a medical worker who assists alongside doctors',hl:'Para',level:'gcse',subj:['Science','H&SC']},
+    {word:'Parasympathetic',note:'part of the nervous system working alongside the sympathetic',hl:'Para',level:'alevel',subj:['Science']},
+  ]},
+  {root:'CRYPT',type:'prefix',meaning:'Hidden',origin:'Greek: kryptos',colour:4,synonyms:['hidden','concealed','secret','coded','camouflaged'],
+   words:[
+    {word:'Cryptic',note:'having a hidden or mysterious meaning',hl:'Crypt',level:'ks3',subj:['English/Media']},
+    {word:'Crypt',note:'a hidden underground chamber or vault',hl:'Crypt',level:'ks3',subj:['History']},
+    {word:'Cryptography',note:'the art of writing and decoding hidden messages — the basis of cybersecurity',hl:'Crypt',level:'gcse',subj:['Maths','IT']},
+    {word:'Cryptic coloration',note:'camouflage that hides an organism in its environment',hl:'Crypt',level:'gcse',subj:['Science']},
+  ]},
+  // ── PHYSICAL SCIENCE ──
+  {root:'THERM',type:'root',meaning:'Heat',origin:'Greek: therme',colour:0,synonyms:['heat','temperature','warm','thermal','energy'],
+   words:[
+    {word:'Thermometer',note:'an instrument for measuring temperature',hl:'Therm',level:'ks3',subj:['Science','H&SC']},
+    {word:'Thermostat',note:'a device that regulates temperature automatically',hl:'Thermo',level:'ks3',subj:['Science','DT']},
+    {word:'Hypothermia',note:'dangerously low body temperature',hl:'therm',level:'ks3',subj:['Science','PE','H&SC']},
+    {word:'Exothermic',note:'a chemical reaction that releases heat',hl:'therm',level:'gcse',subj:['Science']},
+    {word:'Endothermic',note:'a chemical reaction that absorbs heat',hl:'therm',level:'gcse',subj:['Science']},
+  ]},
+  {root:'RADI',type:'root',meaning:'Ray',origin:'Latin: radius',colour:3,synonyms:['ray','beam','radiate','spoke','outward'],
+   words:[
+    {word:'Radius',note:'a straight line from centre to edge, like a spoke',hl:'Radi',level:'ks3',subj:['Maths']},
+    {word:'Radiate',note:'to send out rays or waves in all directions',hl:'Radi',level:'ks3',subj:['Science']},
+    {word:'Radioactive',note:'emitting rays of ionising energy',hl:'Radio',level:'gcse',subj:['Science']},
+    {word:'Radiation',note:'energy travelling as rays or waves through space',hl:'Radi',level:'gcse',subj:['Science']},
+  ]},
+  {root:'LUMIN',type:'root',meaning:'Light',origin:'Latin: lumen',colour:2,synonyms:['light','glow','brightness','illuminate','shine'],
+   words:[
+    {word:'Luminous',note:'giving off or producing light',hl:'Lumin',level:'ks3',subj:['Science']},
+    {word:'Illuminate',note:'to light something up (e.g. a stage)',hl:'illumin',level:'ks3',subj:['English/Media','Music & Drama']},
+    {word:'Translucent',note:'allowing light to pass through diffusely — important in material choice',hl:'luc',level:'gcse',subj:['Science','DT']},
+    {word:'Bioluminescence',note:'production of light by living organisms',hl:'lumin',level:'gcse',subj:['Science']},
+  ]},
+  // ── EARTH / ENVIRONMENT ──
+  {root:'TERR',type:'root',meaning:'Land / Earth',origin:'Latin: terra',colour:4,synonyms:['land','earth','ground','soil','territory'],
+   words:[
+    {word:'Territory',note:'an area of land claimed by an animal, group or country',hl:'Terr',level:'ks3',subj:['Science','Geography','History']},
+    {word:'Terrestrial',note:'living on land rather than in water or air',hl:'Terr',level:'ks3',subj:['Science']},
+    {word:'Terrain',note:'the physical features of a stretch of land',hl:'Terr',level:'ks3',subj:['Geography']},
+    {word:'Extraterrestrial',note:'originating from beyond the Earth',hl:'terr',level:'gcse',subj:['Science']},
+    {word:'Terrace',note:'a flat area of land cut into a hillside',hl:'Terr',level:'gcse',subj:['Geography','History']},
+  ]},
+  {root:'LITH',type:'root',meaning:'Stone / Rock',origin:'Greek: lithos',colour:0,synonyms:['stone','rock','hard','mineral','solid'],
+   words:[
+    {word:'Lithosphere',note:'the rocky outer shell of the Earth',hl:'Litho',level:'gcse',subj:['Geography','Science']},
+    {word:'Neolithic',note:'relating to the New Stone Age',hl:'lithic',level:'ks3',subj:['History']},
+    {word:'Lithification',note:'process by which sediment hardens into rock',hl:'Lithi',level:'alevel',subj:['Geography']},
+    {word:'Monolith',note:'a large single block of stone',hl:'lith',level:'gcse',subj:['History','English/Media']},
+  ]},
+  // ── FROM ORIGINAL POSTERS ──
+  {root:'ANIMA',type:'root',meaning:'Life',origin:'Latin: anima',colour:1,synonyms:['life','living','alive','breath','spirit','soul'],
+   words:[
+    {word:'Animal',note:'a living, breathing creature',hl:'Anim',level:'ks3',subj:['Science']},
+    {word:'Animated',note:'brought to life',hl:'Anim',level:'ks3',subj:['English/Media','Music & Drama']},
+    {word:'Animation',note:'making images appear alive — used in film, TV and game design',hl:'Anim',level:'ks3',subj:['English/Media','IT']},
+    {word:'Inanimate',note:'not alive; without life',hl:'anim',level:'gcse',subj:['Science','English/Media']},
+  ]},
+  {root:'ANTHRO',type:'root',meaning:'Human',origin:'Greek: anthrōpos',colour:2,synonyms:['human','people','mankind','humanity'],
+   words:[
+    {word:'Anthropomorphic',note:'giving human qualities to non-human things',hl:'Anthro',level:'ks3',subj:['English/Media']},
+    {word:'Philanthropist',note:'a person who loves and helps humanity',hl:'anthrop',level:'gcse',subj:['English/Media','History']},
+    {word:'Anthropology',note:'the study of humans and societies',hl:'Anthro',level:'gcse',subj:['History','RS']},
+    {word:'Anthropocene',note:'the era defined by dominant human impact on Earth',hl:'Anthro',level:'alevel',subj:['Geography','Science']},
+  ]},
+  {root:'BIO',type:'root',meaning:'Life',origin:'Greek: bios',colour:1,synonyms:['life','living','organism','biological'],
+   words:[
+    {word:'Biology',note:'the study of living things',hl:'Bio',level:'ks3',subj:['Science']},
+    {word:'Biography',note:'a written account of someone\'s life',hl:'Bio',level:'ks3',subj:['English/Media']},
+    {word:'Antibiotic',note:'a drug that destroys living bacteria',hl:'bio',level:'gcse',subj:['Science','H&SC']},
+    {word:'Biodiversity',note:'the variety of life within an ecosystem',hl:'Bio',level:'gcse',subj:['Science','Geography']},
+    {word:'Biometric',note:'identifying a person by unique biological characteristics',hl:'Bio',level:'gcse',subj:['IT','Science']},
+    {word:'Biome',note:'a large community of living things sharing a climate',hl:'Bio',level:'alevel',subj:['Geography','Science']},
+  ]},
+  {root:'CHROM',type:'root',meaning:'Colour',origin:'Greek: chrōma',colour:2,synonyms:['colour','pigment','hue','tint'],
+   words:[
+    {word:'Monochrome',note:'using only a single colour',hl:'chrom',level:'ks3',subj:['English/Media']},
+    {word:'Chromatic',note:'relating to colour; in music, using all twelve semitones',hl:'Chrom',level:'gcse',subj:['Science','Music & Drama']},
+    {word:'Chromosome',note:'thread-like body in the nucleus that takes up colour stains',hl:'Chrom',level:'gcse',subj:['Science']},
+    {word:'Chromatography',note:'separating mixtures by how they move through a medium',hl:'Chrom',level:'gcse',subj:['Science']},
+  ]},
+  {root:'DUCT',type:'root',meaning:'Lead / Guide',origin:'Latin: ducere',colour:3,synonyms:['lead','guide','carry','channel','direct'],
+   words:[
+    {word:'Duct',note:'a tube or channel that leads fluid or air somewhere',hl:'Duct',level:'ks3',subj:['Science','DT']},
+    {word:'Conduct',note:'to lead or guide (electricity, heat, behaviour — or an orchestra)',hl:'duct',level:'ks3',subj:['Science','Music & Drama']},
+    {word:'Aqueduct',note:'a channel that leads water across a distance',hl:'duct',level:'gcse',subj:['History']},
+    {word:'Ductile',note:'able to be drawn out into thin wires — a key material property',hl:'Duct',level:'gcse',subj:['Science','DT']},
+    {word:'Oviduct',note:'the tube that leads eggs from the ovary',hl:'duct',level:'alevel',subj:['Science']},
+  ]},
+  {root:'EQU',type:'prefix',meaning:'Equal',origin:'Latin: aequus',colour:0,synonyms:['equal','same','balanced','even','level'],
+   words:[
+    {word:'Equal',note:'exactly the same in value or amount',hl:'Equ',level:'ks3',subj:['Maths']},
+    {word:'Equation',note:'a mathematical statement where two sides are equal',hl:'Equ',level:'ks3',subj:['Maths','Science']},
+    {word:'Equator',note:'the line dividing the Earth into two equal halves',hl:'Equ',level:'gcse',subj:['Geography']},
+    {word:'Equilibrium',note:'a state of balance between equal and opposing forces',hl:'Equ',level:'gcse',subj:['Science','PE']},
+    {word:'Equinox',note:'the point when day and night are of equal length',hl:'Equ',level:'alevel',subj:['Geography','Science']},
+  ]},
+  {root:'FIRM',type:'root',meaning:'Strong / Stable',origin:'Latin: firmus',colour:4,synonyms:['firm','strong','stable','solid','fixed'],
+   words:[
+    {word:'Firm',note:'solid; not likely to move or change',hl:'Firm',level:'ks3',subj:['English/Media','Business']},
+    {word:'Confirm',note:'to make something firm or certain',hl:'firm',level:'ks3',subj:['English/Media']},
+    {word:'Affirm',note:'to state something firmly as true',hl:'firm',level:'gcse',subj:['English/Media']},
+    {word:'Infirm',note:'not firm; weak or in poor health',hl:'firm',level:'gcse',subj:['English/Media','H&SC']},
+    {word:'Affirmation',note:'a strong, positive declaration',hl:'firm',level:'alevel',subj:['English/Media','RS']},
+  ]},
+  {root:'GEN',type:'root',meaning:'Origin / Produce',origin:'Greek/Latin: genesis',colour:1,synonyms:['origin','birth','produce','create','kind'],
+   words:[
+    {word:'Generate',note:'to produce or bring something into being',hl:'Gen',level:'ks3',subj:['Science']},
+    {word:'Genesis',note:'the origin or very beginning of something',hl:'Gen',level:'ks3',subj:['English/Media','RS']},
+    {word:'Genetics',note:'the study of inherited traits',hl:'Gen',level:'gcse',subj:['Science']},
+    {word:'Hydrogen',note:'element that produces water when burned',hl:'gen',level:'gcse',subj:['Science']},
+    {word:'Pathogen',note:'an agent that produces or causes disease',hl:'gen',level:'gcse',subj:['Science','H&SC']},
+    {word:'Mutagenic',note:'capable of producing mutations in DNA',hl:'gen',level:'alevel',subj:['Science']},
+  ]},
+  {root:'HYDR',type:'root',meaning:'Water',origin:'Greek: hydor',colour:4,synonyms:['water','watery','fluid','liquid','aqueous'],
+   words:[
+    {word:'Hydrate',note:'to add water to something (vital before and during exercise)',hl:'Hydr',level:'ks3',subj:['Science','PE']},
+    {word:'Dehydrate',note:'to remove water (also a food preservation technique)',hl:'hydr',level:'ks3',subj:['Science','PE','DT']},
+    {word:'Hydraulic',note:'powered by water or fluid under pressure',hl:'Hydr',level:'gcse',subj:['Science','DT']},
+    {word:'Hydrolysis',note:'breaking chemical bonds using water molecules',hl:'Hydr',level:'gcse',subj:['Science']},
+    {word:'Hydrophilic',note:'attracted to water; water-loving',hl:'Hydr',level:'alevel',subj:['Science']},
+    {word:'Hydrophobic',note:'repelled by water; water-fearing',hl:'Hydr',level:'alevel',subj:['Science']},
+  ]},
+  {root:'MORPH',type:'root',meaning:'Shape',origin:'Greek: morphē',colour:2,synonyms:['shape','form','structure','body'],
+   words:[
+    {word:'Metamorphosis',note:'a complete change in body shape and form',hl:'morph',level:'ks3',subj:['Science']},
+    {word:'Morphology',note:'the study of the shape and structure of organisms',hl:'Morph',level:'gcse',subj:['Science']},
+    {word:'Ectomorph',note:'a lean body type with little fat or muscle',hl:'morph',level:'gcse',subj:['Science','PE']},
+    {word:'Amorphous',note:'without a definite or regular shape',hl:'morph',level:'alevel',subj:['Science']},
+    {word:'Polymorphism',note:'existing in several distinct forms within a population',hl:'morph',level:'alevel',subj:['Science']},
+  ]},
+  {root:'PHOT',type:'root',meaning:'Light',origin:'Greek: phōs',colour:0,synonyms:['light','bright','radiant','luminous'],
+   words:[
+    {word:'Photograph',note:'an image captured and fixed using light',hl:'Phot',level:'ks3',subj:['English/Media']},
+    {word:'Photosynthesis',note:'using light energy to produce food from carbon dioxide',hl:'Phot',level:'gcse',subj:['Science']},
+    {word:'Photon',note:'a quantum particle of light energy',hl:'Phot',level:'gcse',subj:['Science']},
+    {word:'Phototropism',note:'growth of a plant shoot turning toward light',hl:'Phot',level:'alevel',subj:['Science']},
+    {word:'Photolysis',note:'splitting of water molecules using light in photosynthesis',hl:'Phot',level:'alevel',subj:['Science']},
+  ]},
+  {root:'TRANS',type:'prefix',meaning:'Across',origin:'Latin: trans',colour:3,synonyms:['across','over','through','beyond','change'],
+   words:[
+    {word:'Transport',note:'to carry people or goods across a distance',hl:'Trans',level:'ks3',subj:['Geography']},
+    {word:'Translate',note:'to carry meaning across from one language to another',hl:'Trans',level:'ks3',subj:['French','Spanish','English/Media']},
+    {word:'Transparent',note:'allowing light to pass across and through it',hl:'Trans',level:'gcse',subj:['Science']},
+    {word:'Transpiration',note:'the movement of water vapour out across leaf surfaces',hl:'Trans',level:'gcse',subj:['Science']},
+    {word:'Transaction',note:'an exchange carried across between buyer and seller',hl:'Trans',level:'gcse',subj:['Business','IT']},
+    {word:'Transfusion',note:'transferring blood directly across into a patient',hl:'Trans',level:'alevel',subj:['Science','H&SC']},
+  ]},
+  {root:'ARCH',type:'root',meaning:'Rule',origin:'Greek: archein',colour:3,synonyms:['rule','govern','leader','chief','command'],
+   words:[
+    {word:'Monarchy',note:'rule by a single sovereign',hl:'arch',level:'ks3',subj:['History']},
+    {word:'Anarchy',note:'the absence of rule or government',hl:'arch',level:'ks3',subj:['History']},
+    {word:'Hierarchy',note:'a system of ranked levels of authority',hl:'arch',level:'gcse',subj:['English/Media','History','Business']},
+    {word:'Oligarchy',note:'rule by a small, select group',hl:'arch',level:'gcse',subj:['History']},
+    {word:'Patriarch',note:'male head or ruler of a family or group',hl:'arch',level:'alevel',subj:['History','RS']},
+    {word:'Matriarch',note:'female head or ruler of a family or group',hl:'arch',level:'alevel',subj:['History','RS']},
+  ]},
+  {root:'GRAPH',type:'root',meaning:'Write / Draw',origin:'Greek: graphein',colour:4,synonyms:['write','draw','record','inscribe','mark'],
+   words:[
+    {word:'Graph',note:'a diagram that records data visually',hl:'Graph',level:'ks3',subj:['Maths','Science']},
+    {word:'Photograph',note:'an image drawn or captured using light',hl:'graph',level:'ks3',subj:['English/Media']},
+    {word:'Choreograph',note:'to write or design a sequence of dance movements',hl:'graph',level:'ks3',subj:['Music & Drama','PE']},
+    {word:'Biography',note:'a written account of a person\'s life',hl:'graph',level:'gcse',subj:['English/Media']},
+    {word:'Infographic',note:'a visual record combining data and images to communicate information',hl:'graph',level:'gcse',subj:['IT','English/Media']},
+    {word:'Chromatography',note:'a technique for separating mixtures, recorded as bands',hl:'graph',level:'gcse',subj:['Science']},
+  ]},
+  {root:'LOGY',type:'suffix',meaning:'Study of',origin:'Greek: logos',colour:0,synonyms:['study','science','knowledge','subject','discipline'],
+   words:[
+    {word:'Biology',note:'the study of living things',hl:'logy',level:'ks3',subj:['Science']},
+    {word:'Geology',note:'the study of the Earth and its rocks',hl:'logy',level:'ks3',subj:['Geography','Science']},
+    {word:'Psychology',note:'the study of the mind and behaviour',hl:'logy',level:'ks3',subj:['Science']},
+    {word:'Theology',note:'the study of religion and the nature of God',hl:'logy',level:'gcse',subj:['RS']},
+    {word:'Physiology',note:'the study of the functions of living organisms',hl:'logy',level:'gcse',subj:['Science','PE','H&SC']},
+    {word:'Technology',note:'the study and application of practical knowledge and tools',hl:'logy',level:'ks3',subj:['IT','DT']},
+  ]},
+  {root:'PATH',type:'root',meaning:'Suffering / Disease',origin:'Greek: pathos',colour:1,synonyms:['suffering','disease','illness','feeling','disorder'],
+   words:[
+    {word:'Sympathy',note:'feeling alongside someone who is suffering',hl:'path',level:'ks3',subj:['English/Media','H&SC']},
+    {word:'Pathetic',note:'causing a feeling of pity or sadness',hl:'Path',level:'ks3',subj:['English/Media']},
+    {word:'Pathogen',note:'an organism that causes disease and suffering',hl:'Path',level:'gcse',subj:['Science','H&SC']},
+    {word:'Pathology',note:'the study of disease and its causes',hl:'Path',level:'gcse',subj:['Science','H&SC']},
+    {word:'Psychopath',note:'a person with a disorder of feeling and empathy',hl:'path',level:'gcse',subj:['English/Media']},
+    {word:'Neuropathy',note:'disease or dysfunction of the nervous system',hl:'pathy',level:'alevel',subj:['Science']},
+  ]},
+  {root:'PHIL',type:'root',meaning:'Love / Liking',origin:'Greek: philos',colour:2,synonyms:['love','like','fond of','attracted to','affinity'],
+   words:[
+    {word:'Philosophy',note:'love of wisdom and fundamental knowledge',hl:'Phil',level:'ks3',subj:['RS','English/Media']},
+    {word:'Philanthropist',note:'a person who loves and actively helps humanity',hl:'Phil',level:'gcse',subj:['English/Media','History']},
+    {word:'Philharmonic',note:'an orchestra devoted to (loving) harmony and music',hl:'Phil',level:'gcse',subj:['Music & Drama']},
+    {word:'Hydrophilic',note:'attracted to and loving water',hl:'phil',level:'alevel',subj:['Science']},
+    {word:'Bibliophile',note:'a person who loves and collects books',hl:'phil',level:'gcse',subj:['English/Media']},
+  ]},
+  {root:'PORT',type:'root',meaning:'Carry',origin:'Latin: portare',colour:3,synonyms:['carry','bear','transport','convey','move'],
+   words:[
+    {word:'Transport',note:'to carry people or goods from place to place',hl:'port',level:'ks3',subj:['Geography']},
+    {word:'Portable',note:'able to be carried easily — important in product design',hl:'Port',level:'ks3',subj:['English/Media','DT']},
+    {word:'Import',note:'to carry goods in from another country',hl:'port',level:'ks3',subj:['Geography','History','Business']},
+    {word:'Export',note:'to carry goods out to another country',hl:'port',level:'gcse',subj:['Geography','History','Business']},
+    {word:'Portfolio',note:'a case for carrying and displaying work',hl:'Port',level:'gcse',subj:['English/Media','Music & Drama','DT']},
+  ]},
+  {root:'SCOPE',type:'suffix',meaning:'Look / Observe',origin:'Greek: skopein',colour:4,synonyms:['look','see','observe','examine','view'],
+   words:[
+    {word:'Telescope',note:'instrument for looking at distant objects',hl:'scope',level:'ks3',subj:['Science']},
+    {word:'Microscope',note:'instrument for looking at very small objects',hl:'scope',level:'ks3',subj:['Science']},
+    {word:'Periscope',note:'instrument for looking around corners or above water',hl:'scope',level:'ks3',subj:['Science']},
+    {word:'Endoscope',note:'instrument for looking inside the body',hl:'scope',level:'gcse',subj:['Science','H&SC']},
+    {word:'Oscilloscope',note:'instrument for observing electrical wave patterns',hl:'scope',level:'gcse',subj:['Science']},
+  ]},
+  {root:'PSYCH',type:'root',meaning:'Mind',origin:'Greek: psyche',colour:1,synonyms:['mind','mental','consciousness','soul','brain'],
+   words:[
+    {word:'Psychology',note:'the study of the mind and behaviour',hl:'Psych',level:'ks3',subj:['Science','H&SC']},
+    {word:'Psychiatry',note:'the medical treatment of mental disorders',hl:'Psych',level:'ks3',subj:['Science','H&SC']},
+    {word:'Psychopath',note:'a person with a disorder of mind and empathy',hl:'Psych',level:'gcse',subj:['English/Media']},
+    {word:'Psychosomatic',note:'physical symptoms caused by the mind',hl:'Psych',level:'gcse',subj:['Science','H&SC']},
+  ]},
+  // ── MFL-ORIGIN ROOTS ──
+  {root:'MAL',type:'prefix',meaning:'Bad',origin:'Latin/French: malus / mal',colour:4,synonyms:['bad','wrong','ill','evil','poor'],
+   words:[
+    {word:'Malnutrition',note:'poor health from a bad or insufficient diet',hl:'Mal',level:'ks3',subj:['Science','PE','H&SC']},
+    {word:'Malicious',note:'intending to do bad or harmful things',hl:'Mal',level:'ks3',subj:['English/Media','IT']},
+    {word:'Malware',note:'malicious software designed to cause harm to a computer system',hl:'Mal',level:'gcse',subj:['IT']},
+    {word:'Malleable',note:'able to be shaped or bent without breaking — a key material property',hl:'Mal',level:'gcse',subj:['Science','DT']},
+    {word:'Mal / Malade',note:'French for bad / ill',hl:'Mal',level:'ks3',subj:['French']},
+    {word:'Malaria',note:'a disease originally thought to come from "bad air"',hl:'Mal',level:'gcse',subj:['Science','History']},
+  ]},
+  {root:'MAN / MAIN',type:'root',meaning:'Hand',origin:'Latin: manus / French: main',colour:0,synonyms:['hand','manual','by hand'],
+   words:[
+    {word:'Manual',note:'operated by hand; also an instruction handbook',hl:'Man',level:'ks3',subj:['Science','English/Media','DT']},
+    {word:'Manufacture',note:'to make something by hand (originally) — now mass production',hl:'Man',level:'ks3',subj:['English/Media','DT','Business']},
+    {word:'Manipulate',note:'to handle or control skilfully with the hands',hl:'Man',level:'gcse',subj:['Science','English/Media','H&SC']},
+    {word:'Main / Mano',note:'French and Spanish words for hand',hl:'Main',level:'ks3',subj:['French','Spanish']},
+    {word:'Manuscript',note:'a text written by hand (originally)',hl:'Man',level:'gcse',subj:['English/Media','History']},
+  ]},
+  {root:'GRAND',type:'root',meaning:'Big / Great',origin:'French/Spanish: grand(e)',colour:2,synonyms:['big','large','great','grand'],
+   words:[
+    {word:'Grand',note:'large, impressive, or important',hl:'Grand',level:'ks3',subj:['English/Media']},
+    {word:'Grandeur',note:'the quality of being grand and impressive',hl:'Grand',level:'ks3',subj:['English/Media']},
+    {word:'Grandiose',note:'excessively large or showy',hl:'Grandi',level:'gcse',subj:['English/Media']},
+    {word:'Grand / Grande',note:'the French and Spanish words for big or tall',hl:'Grand',level:'ks3',subj:['French','Spanish']},
+  ]},
+  {root:'PETIT',type:'root',meaning:'Small',origin:'French: petit',colour:3,synonyms:['small','little','minor','petty'],
+   words:[
+    {word:'Petite',note:'small and delicately built',hl:'Petit',level:'ks3',subj:['English/Media']},
+    {word:'Petty',note:'of small or minor importance',hl:'Pett',level:'ks3',subj:['English/Media']},
+    {word:'Petit four',note:'a small bite-sized cake or sweet — from French',hl:'Petit',level:'ks3',subj:['French','DT']},
+    {word:'Petit / Pequeño',note:'French and Spanish words for small',hl:'Petit',level:'ks3',subj:['French','Spanish']},
+  ]},
+  // ── MUSIC / STRUCTURE ──
+  {root:'FORT',type:'root',meaning:'Strong / Loud',origin:'Latin: fortis',colour:1,synonyms:['strong','loud','powerful','force'],
+   words:[
+    {word:'Force',note:'a push or pull; physical strength',hl:'Forc',level:'ks3',subj:['Science']},
+    {word:'Fortify',note:'to strengthen something',hl:'Fort',level:'ks3',subj:['English/Media','History']},
+    {word:'Fort',note:'a strong, defended structure',hl:'Fort',level:'ks3',subj:['History']},
+    {word:'Forte',note:'played loudly and strongly in music',hl:'Fort',level:'gcse',subj:['Music & Drama']},
+    {word:'Fortissimo',note:'played very loudly indeed in music',hl:'Fort',level:'gcse',subj:['Music & Drama']},
+    {word:'Reinforced',note:'made stronger with added material — key concept in construction',hl:'forc',level:'gcse',subj:['DT','Science']},
+  ]},
+  {root:'CHOR',type:'root',meaning:'Dance / Chorus',origin:'Greek: khoreia',colour:2,synonyms:['dance','movement','chorus','choral'],
+   words:[
+    {word:'Chorus',note:'a group singing or speaking together, or a repeated song section',hl:'Chor',level:'ks3',subj:['Music & Drama','English/Media']},
+    {word:'Choir',note:'a group of singers performing together',hl:'Cho',level:'ks3',subj:['Music & Drama']},
+    {word:'Choreography',note:'the design and arrangement of dance movements',hl:'Chor',level:'ks3',subj:['Music & Drama','PE']},
+    {word:'Choral',note:'relating to or sung by a choir',hl:'Chor',level:'gcse',subj:['Music & Drama']},
+  ]},
+  {root:'STRUCT',type:'root',meaning:'Build',origin:'Latin: struere',colour:0,synonyms:['build','construct','assemble','make','framework'],
+   words:[
+    {word:'Structure',note:'something built or put together',hl:'Struct',level:'ks3',subj:['Science','DT','English/Media']},
+    {word:'Construct',note:'to build something',hl:'struct',level:'ks3',subj:['DT','Maths']},
+    {word:'Instruct',note:'to build knowledge or skill in someone by teaching',hl:'struct',level:'ks3',subj:['English/Media']},
+    {word:'Infrastructure',note:'the basic physical systems built to support a society',hl:'struct',level:'gcse',subj:['Geography','DT','Business']},
+    {word:'Destructive testing',note:'testing a material or product to the point of breaking it',hl:'struct',level:'gcse',subj:['DT','Science']},
+  ]},
+  // ── SUFFIX CARDS ──
+  {root:'-OLOGY',type:'suffix',meaning:'Study of',origin:'Greek: logos',colour:1,synonyms:['study of','science of','the study','branch of knowledge'],
+   words:[
+    {word:'Biology',note:'the study of living things',hl:'ology',level:'ks3',subj:['Science']},
+    {word:'Geology',note:'the study of the Earth and its rocks',hl:'ology',level:'ks3',subj:['Geography','Science']},
+    {word:'Psychology',note:'the study of the mind and behaviour',hl:'ology',level:'ks3',subj:['Science']},
+    {word:'Technology',note:'the study and application of practical tools and techniques',hl:'ology',level:'ks3',subj:['IT','DT']},
+    {word:'Physiology',note:'the study of how living organisms function',hl:'ology',level:'gcse',subj:['Science','PE']},
+    {word:'Pharmacology',note:'the study of drugs and their effects',hl:'ology',level:'alevel',subj:['Science','H&SC']},
+  ]},
+  {root:'-OSIS / -SIS',type:'suffix',meaning:'Process / Condition',origin:'Greek: -osis',colour:2,synonyms:['process','condition','state','series of steps','happening'],
+   words:[
+    {word:'Osmosis',note:'the process of water moving across a membrane',hl:'osis',level:'gcse',subj:['Science']},
+    {word:'Mitosis',note:'the process of cell division producing identical cells',hl:'osis',level:'gcse',subj:['Science']},
+    {word:'Photosynthesis',note:'the process by which plants make food using light',hl:'sis',level:'gcse',subj:['Science']},
+    {word:'Diagnosis',note:'the process of identifying a disease or condition',hl:'osis',level:'gcse',subj:['Science','H&SC']},
+    {word:'Meiosis',note:'the process of cell division that produces sex cells',hl:'osis',level:'alevel',subj:['Science']},
+    {word:'Haematopoiesis',note:'the process of blood cell production in bone marrow',hl:'sis',level:'alevel',subj:['Science']},
+  ]},
+  {root:'-ITIS',type:'suffix',meaning:'Inflammation',origin:'Greek: -itis',colour:3,synonyms:['inflammation','swelling','irritation','infection of'],
+   words:[
+    {word:'Dermatitis',note:'inflammation of the skin',hl:'itis',level:'ks3',subj:['Science','H&SC']},
+    {word:'Arthritis',note:'inflammation of the joints',hl:'itis',level:'ks3',subj:['Science','H&SC','PE']},
+    {word:'Tonsillitis',note:'inflammation of the tonsils',hl:'itis',level:'ks3',subj:['Science','H&SC']},
+    {word:'Appendicitis',note:'inflammation of the appendix',hl:'itis',level:'gcse',subj:['Science']},
+    {word:'Gastroenteritis',note:'inflammation of the stomach and intestines',hl:'itis',level:'gcse',subj:['Science','H&SC']},
+    {word:'Meningitis',note:'inflammation of the membranes surrounding the brain',hl:'itis',level:'gcse',subj:['Science','H&SC']},
+  ]},
+  {root:'-ASE',type:'suffix',meaning:'Enzyme',origin:'from diastase (Greek: dia + stasis)',colour:4,synonyms:['enzyme','biological catalyst','breaks down'],
+   words:[
+    {word:'Lipase',note:'enzyme that breaks down fats',hl:'ase',level:'gcse',subj:['Science']},
+    {word:'Amylase',note:'enzyme that breaks down starch',hl:'ase',level:'gcse',subj:['Science']},
+    {word:'Protease',note:'enzyme that breaks down proteins',hl:'ase',level:'gcse',subj:['Science']},
+    {word:'Lactase',note:'enzyme that breaks down lactose (milk sugar)',hl:'ase',level:'gcse',subj:['Science','H&SC']},
+    {word:'Polymerase',note:'enzyme that builds DNA or RNA chains',hl:'ase',level:'alevel',subj:['Science']},
+  ]},
+  {root:'-ECTOMY',type:'suffix',meaning:'Surgical removal',origin:'Greek: ek + tome (cutting out)',colour:0,synonyms:['removal','surgical removal','cutting out','excision'],
+   words:[
+    {word:'Appendectomy',note:'surgical removal of the appendix',hl:'ectomy',level:'gcse',subj:['Science','H&SC']},
+    {word:'Tonsillectomy',note:'surgical removal of the tonsils',hl:'ectomy',level:'gcse',subj:['Science','H&SC']},
+    {word:'Mastectomy',note:'surgical removal of a breast',hl:'ectomy',level:'gcse',subj:['Science','H&SC']},
+    {word:'Gastrectomy',note:'surgical removal of all or part of the stomach',hl:'ectomy',level:'alevel',subj:['Science']},
+  ]},
+  {root:'-IC',type:'suffix',meaning:'To do with / Relating to',origin:'Greek/Latin: -icus',colour:1,synonyms:['relating to','to do with','characteristic of','of the type'],
+   words:[
+    {word:'Aerobic',note:'to do with air and oxygen',hl:'ic',level:'ks3',subj:['Science','PE']},
+    {word:'Artistic',note:'to do with art and creativity',hl:'ic',level:'ks3',subj:['English/Media','Music & Drama']},
+    {word:'Plastic',note:'to do with being shaped or moulded',hl:'ic',level:'ks3',subj:['DT','Science']},
+    {word:'Authentic',note:'to do with being genuine or original',hl:'ic',level:'gcse',subj:['English/Media','History','RS']},
+    {word:'Genetic',note:'to do with genes and inheritance',hl:'ic',level:'gcse',subj:['Science']},
+    {word:'Cardiac',note:'to do with the heart',hl:'ac',level:'gcse',subj:['Science','PE']},
+    {word:'Arthritic',note:'to do with arthritis and joint inflammation',hl:'itic',level:'gcse',subj:['Science','H&SC']},
+  ]},
+  {root:'-OSE',type:'suffix',meaning:'Sugar / Full of',origin:'from glucose (Greek: glykys)',colour:2,synonyms:['sugar','a carbohydrate','full of','containing'],
+   words:[
+    {word:'Glucose',note:'the main sugar used in respiration',hl:'ose',level:'ks3',subj:['Science','PE']},
+    {word:'Fructose',note:'the sugar found in fruit',hl:'ose',level:'gcse',subj:['Science','H&SC']},
+    {word:'Lactose',note:'the sugar found in milk',hl:'ose',level:'gcse',subj:['Science','H&SC']},
+    {word:'Sucrose',note:'table sugar — a disaccharide made of glucose and fructose',hl:'ose',level:'gcse',subj:['Science','DT']},
+    {word:'Cellulose',note:'the structural carbohydrate that makes up plant cell walls',hl:'ose',level:'alevel',subj:['Science']},
+    {word:'Maltose',note:'a sugar produced when starch is broken down by amylase',hl:'ose',level:'alevel',subj:['Science']},
+  ]},
+  {root:'-PHONE',type:'suffix',meaning:'Sound / Voice',origin:'Greek: phone',colour:3,synonyms:['sound','voice','noise','instrument for sound'],
+   words:[
+    {word:'Telephone',note:'a device for transmitting voice over distance',hl:'phone',level:'ks3',subj:['English/Media','IT']},
+    {word:'Microphone',note:'a device that picks up and amplifies small sounds',hl:'phone',level:'ks3',subj:['Science','Music & Drama']},
+    {word:'Headphones',note:'a device worn on the head to hear sound privately',hl:'phone',level:'ks3',subj:['English/Media','Music & Drama']},
+    {word:'Saxophone',note:'a musical instrument that produces sound through a reed',hl:'phone',level:'ks3',subj:['Music & Drama']},
+    {word:'Phoneme',note:'the smallest unit of sound in a language',hl:'phone',level:'gcse',subj:['English/Media','French','Spanish']},
+    {word:'Francophone',note:'a French-speaking person or country',hl:'phone',level:'gcse',subj:['French','Geography']},
+  ]},
+];
+
+// CARDS built dynamically via buildCards() above
+
+// ── STATE ──
+let currentIdx=null;
+let mode='A';
+let level='ks3';
+let activeSubjects=new Set();
+let revealed=[];
+let solved=false;
+let customPanelOpen=false;
+let selectedSubjPick=new Set();
+let activeTab='word';
+
+// ── LOCALSTORAGE: custom words keyed by root ──
+function customKey(root){return 'rootwords_custom_'+root;}
+const CUSTOM_CARDS_KEY='rootwords_custom_cards';
+
+function loadCustomWords(root){
+  try{const s=localStorage.getItem(customKey(root));return s?JSON.parse(s):[];}catch(e){return[];}
+}
+
+function saveCustomWords(root,words){
+  try{localStorage.setItem(customKey(root),JSON.stringify(words));}catch(e){}
+}
+
+function loadCustomCards(){
+  try{const s=localStorage.getItem(CUSTOM_CARDS_KEY);return s?JSON.parse(s):[];}catch(e){return[];}
+}
+
+function saveCustomCards(cards){
+  try{localStorage.setItem(CUSTOM_CARDS_KEY,JSON.stringify(cards));}catch(e){}
+}
+
+// Build full CARDS array including custom cards
+function buildCards(){
+  const seen=new Set();
+  const base=ALL_CARDS.filter(c=>{if(seen.has(c.root))return false;seen.add(c.root);return true;});
+  const custom=loadCustomCards().filter(c=>{if(seen.has(c.root))return false;seen.add(c.root);return true;});
+  return [...base,...custom];
+}
+
+let CARDS=buildCards();
+
+// ── ACCENT ──
+function accentCol(){
+  if(currentIdx===null)return'#E8611A';
+  return PALETTE[CARDS[currentIdx].colour];
+}
+
+function setAccent(){
+  document.documentElement.style.setProperty('--accent',accentCol());
+}
+
+// ── FILTERS ──
+function passesSubjectFilter(w){
+  if(activeSubjects.size===0)return true;
+  return w.subj.some(s=>activeSubjects.has(s));
+}
+
+function wordsForLevel(card){
+  const maxL=LO[level];
+  const base=card.words.filter(w=>LO[w.level]<=maxL&&passesSubjectFilter(w));
+  const custom=loadCustomWords(card.root).filter(w=>LO[w.level]<=maxL&&passesSubjectFilter(w));
+  return [...base,...custom];
+}
+
+// ── SUBJECT FILTER CHIPS ──
+function renderSubjectFilter(){
+  const area=document.getElementById('subjectFilter');
+  area.innerHTML='';
+  ALL_SUBJECTS.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='subj-chip'+(activeSubjects.has(s)?' active':'');
+    btn.textContent=s;
+    btn.style.borderColor=SUBJECT_COL[s];
+    if(activeSubjects.has(s))btn.style.background=SUBJECT_COL[s];
+    btn.onclick=()=>{
+      if(activeSubjects.has(s))activeSubjects.delete(s);else activeSubjects.add(s);
+      renderSubjectFilter();
+      if(currentIdx!==null)renderWords();
+    };
+    area.appendChild(btn);
+  });
+}
+
+// ── SUBJECT PICKER (custom panel) ──
+function renderSubjPicker(){
+  const area=document.getElementById('subjPicker');
+  area.innerHTML='';
+  ALL_SUBJECTS.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='subj-pick-btn'+(selectedSubjPick.has(s)?' active':'');
+    btn.textContent=SUBJECT_ABBR[s];
+    btn.title=s;
+    btn.style.borderColor=SUBJECT_COL[s];
+    if(selectedSubjPick.has(s))btn.style.background=SUBJECT_COL[s];
+    btn.onclick=()=>{
+      if(selectedSubjPick.has(s))selectedSubjPick.delete(s);else selectedSubjPick.add(s);
+      renderSubjPicker();
+    };
+    area.appendChild(btn);
+  });
+}
+
+// ── HIGHLIGHT HELPER ──
+function hlWord(word,h){
+  const lo=word.toLowerCase(),hlo=h.toLowerCase();
+  const i=lo.indexOf(hlo);
+  if(i===-1)return`<span class="tile-word-text">${word}</span>`;
+  return`<span class="tile-word-text">${word.slice(0,i)}<span class="root-hl">${word.slice(i,i+h.length)}</span>${word.slice(i+h.length)}</span>`;
+}
+
+function subjTags(subjArr){
+  return subjArr.map(s=>`<span class="subj-tag" style="background:${SUBJECT_COL[s]}">${SUBJECT_ABBR[s]}</span>`).join('');
+}
+
+// ── FONT SCALING ──
+function scaledFontSize(t){
+  const l=t.replace(/^\-/,'').replace(/\s*\/\s*.+/,'').trim().length;
+  if(l<=4)return'36px';
+  if(l<=6)return'30px';
+  if(l<=8)return'25px';
+  return'20px';
+}
+
+// ── RENDER CARD ──
+function renderCard(idx){
+  currentIdx=idx;
+  revealed=[];
+  solved=false;
+  setAccent();
+
+  const card=CARDS[idx];
+  const rw=document.getElementById('rootWord');
+  rw.textContent=card.root;
+  rw.classList.remove('title-state');
+  rw.style.fontSize=scaledFontSize(card.root);
+
+  const tl=document.getElementById('rootTypeLabel');
+  tl.textContent=card.type||'';
+
+  // reset reveal button and answer bar
+  const rb=document.getElementById('revealBtn');
+  if(rb){rb.disabled=false;rb.textContent='Reveal answer';}
+  const ab=document.getElementById('answerBar');
+  if(ab){ab.classList.remove('show');ab.textContent='';}
+
+  syncSegs();
+  renderWords();
+  updateCounter();
+  renderCustomWordsList();
+}
+
+function renderWords(){
+  const sec=document.getElementById('wordsSection');
+  sec.innerHTML='';
+
+  if(currentIdx===null){
+    sec.innerHTML=`<div class="title-prompt">Select a key stage and subject filter,<br>then press the dice button to begin</div>`;
+    const div=document.createElement('div');div.className='cover-divider';div.style.background=accentCol();sec.appendChild(div);
+    return;
+  }
+
+  const card=CARDS[currentIdx];
+  const words=wordsForLevel(card);
+
+  if(words.length===0){
+    const msg=document.createElement('div');msg.className='no-words-msg';msg.textContent='No words match this filter at this level for this root.';sec.appendChild(msg);
+  } else if(mode==='B'){
+    // Show all mode: always show definitions
+    words.forEach(w=>{
+      const d=document.createElement('div');d.className='word-tile tile-revealed';
+      d.innerHTML=`<div class="tile-word-row">${hlWord(w.word,w.hl)}${subjTags(w.subj)}</div><div class="tile-note show">${w.note}</div>`;
+      sec.appendChild(d);
+    });
+  } else {
+    // Reveal words mode: tap to show word, definitions only after Reveal Answer
+    words.forEach((w,i)=>{
+      const d=document.createElement('div');
+      const isRev=revealed.includes(i);
+      if(!isRev){
+        d.className='word-tile tile-hidden';
+        d.style.cssText=`border-color:${accentCol()}55;`;
+        d.textContent='tap to reveal';
+        d.onclick=()=>{revealed.push(i);renderWords();};
+      } else {
+        d.className='word-tile tile-revealed';
+        // definition only visible once solved
+        const noteClass=solved?'tile-note show':'tile-note';
+        d.innerHTML=`<div class="tile-word-row">${hlWord(w.word,w.hl)}${subjTags(w.subj)}</div><div class="${noteClass}">${w.note}</div>`;
+      }
+      sec.appendChild(d);
+    });
+  }
+
+  const div=document.createElement('div');div.className='cover-divider';div.style.background=accentCol();sec.appendChild(div);
+}
+
+// ── CONTROLS ──
+function syncSegs(){
+  const c=accentCol();
+  ['levelSeg','modeSeg'].forEach(id=>{
+    document.querySelectorAll(`#${id} .seg-btn`).forEach(b=>{
+      const a=b.classList.contains('active');
+      b.style.background=a?c:'';b.style.borderColor=a?c:'';b.style.color=a?'#fff':'';
+    });
+  });
+  // dice button accent
+  const db=document.querySelector('.dice-btn');
+  if(db)db.style.background=c;
+}
+
+function setLevel(l){
+  level=l;
+  document.querySelectorAll('#levelSeg .seg-btn').forEach((b,i)=>{
+    const levels=['ks3','gcse','alevel'];
+    const act=levels[i]===l;
+    b.classList.toggle('active',act);
+    b.style.background=act?accentCol():'';b.style.borderColor=act?accentCol():'';b.style.color=act?'#fff':'';
+  });
+  revealed=[];if(currentIdx!==null)renderWords();
+}
+
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('#modeSeg .seg-btn').forEach((b,i)=>{
+    const act=i===(m==='A'?0:1);
+    b.classList.toggle('active',act);
+    b.style.background=act?accentCol():'';b.style.borderColor=act?accentCol():'';b.style.color=act?'#fff':'';
+  });
+  renderWords();
+}
+
+function pickRandom(){
+  const eligible=CARDS.map((_,i)=>i).filter(i=>{
+    const ws=wordsForLevel(CARDS[i]);
+    return ws.length>0;
+  });
+  if(eligible.length===0)return;
+  let next;
+  if(eligible.length===1){next=eligible[0];}
+  else{do{next=eligible[Math.floor(Math.random()*eligible.length)];}while(next===currentIdx);}
+  renderCard(next);
+}
+
+function updateCounter(){
+  document.getElementById('cardCounter').textContent=currentIdx!==null?`Card ${currentIdx+1} of ${CARDS.length}`:'';
+}
+
+// ── REVEAL ANSWER ──
+function revealAnswer(){
+  if(currentIdx===null)return;
+  solved=true;
+  const card=CARDS[currentIdx];
+  // reveal all remaining tiles
+  const words=wordsForLevel(card);
+  words.forEach((_,i)=>{if(!revealed.includes(i))revealed.push(i);});
+  renderWords();
+  // show answer bar
+  const ab=document.getElementById('answerBar');
+  if(ab){
+    ab.textContent=`✓ ${card.root} — "${card.meaning}"  ·  ${card.origin}`;
+    ab.classList.add('show');
+  }
+  const rb=document.getElementById('revealBtn');
+  if(rb){rb.disabled=true;rb.textContent='Answer revealed';}
+}
+
+// ── CUSTOM PANEL TABS ──
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.panel-tab').forEach((b,i)=>b.classList.toggle('active',['word','card'][i]===tab));
+  document.getElementById('tabWord').classList.toggle('active',tab==='word');
+  document.getElementById('tabCard').classList.toggle('active',tab==='card');
+  if(tab==='card')renderCustomCardsList();
+  if(tab==='word'){renderSubjPicker();renderCustomWordsList();}
+}
+
+// ── CUSTOM WORD PANEL ──
+function toggleCustom(){
+  customPanelOpen=!customPanelOpen;
+  document.getElementById('customPanel').classList.toggle('open',customPanelOpen);
+  document.getElementById('customToggleBtn').textContent=customPanelOpen?'− Close':'＋ Add your own words to a card';
+  if(customPanelOpen){renderSubjPicker();renderCustomWordsList();}
+}
+
+function addCustomWord(){
+  if(currentIdx===null){alert('Please select a card first using the Random Root button.');return;}
+  const word=document.getElementById('cwWord').value.trim();
+  const note=document.getElementById('cwNote').value.trim();
+  const hl=document.getElementById('cwHl').value.trim();
+  const lvl=document.getElementById('cwLevel').value;
+  if(!word||!note||!hl){alert('Please fill in Word, Definition and Highlight fields.');return;}
+  const subj=selectedSubjPick.size>0?[...selectedSubjPick]:['Science'];
+  const existing=loadCustomWords(CARDS[currentIdx].root);
+  existing.push({word,note,hl,level:lvl,subj,custom:true});
+  saveCustomWords(CARDS[currentIdx].root,existing);
+  document.getElementById('cwWord').value='';
+  document.getElementById('cwNote').value='';
+  document.getElementById('cwHl').value='';
+  selectedSubjPick.clear();
+  renderSubjPicker();
+  renderCustomWordsList();
+  renderWords();
+}
+
+function renderCustomWordsList(){
+  const list=document.getElementById('customWordsList');
+  if(!list)return;
+  list.innerHTML='';
+  if(currentIdx===null){list.innerHTML='<span style="font-size:11px;color:#aaa;font-family:var(--sans);font-style:italic;">Select a card to manage its custom words</span>';return;}
+  const words=loadCustomWords(CARDS[currentIdx].root);
+  if(words.length===0){list.innerHTML='<span style="font-size:11px;color:#aaa;font-family:var(--sans);font-style:italic;">No custom words yet for this card</span>';return;}
+  words.forEach((w,i)=>{
+    const row=document.createElement('div');row.className='custom-word-item';
+    row.innerHTML=`<span class="cw-word">${w.word}</span><span class="cw-note">${w.note}</span><button class="del-btn" title="Remove" onclick="removeCustomWord(${i})">✕</button>`;
+    list.appendChild(row);
+  });
+}
+
+function removeCustomWord(i){
+  if(currentIdx===null)return;
+  const words=loadCustomWords(CARDS[currentIdx].root);
+  words.splice(i,1);
+  saveCustomWords(CARDS[currentIdx].root,words);
+  renderCustomWordsList();
+  renderWords();
+}
+
+// ── CUSTOM CARD FUNCTIONS ──
+function addCustomCard(){
+  const root=document.getElementById('ncRoot').value.trim().toUpperCase();
+  const type=document.getElementById('ncType').value;
+  const meaning=document.getElementById('ncMeaning').value.trim();
+  const origin=document.getElementById('ncOrigin').value.trim();
+  if(!root||!meaning){alert('Please fill in Root and Meaning at minimum.');return;}
+  if(CARDS.some(c=>c.root===root)){alert(`A card for "${root}" already exists.`);return;}
+  const newCard={
+    root,type,meaning,origin:origin||'',colour:Math.floor(Math.random()*5),
+    synonyms:[meaning.toLowerCase()],words:[],custom:true
+  };
+  const existing=loadCustomCards();
+  existing.push(newCard);
+  saveCustomCards(existing);
+  // rebuild CARDS
+  CARDS=buildCards();
+  document.getElementById('ncRoot').value='';
+  document.getElementById('ncMeaning').value='';
+  document.getElementById('ncOrigin').value='';
+  renderCustomCardsList();
+  updateCounter();
+  alert(`Card for "${root}" created. Navigate to it using the Random Root button, then add words using the "Add word to card" tab.`);
+}
+
+function renderCustomCardsList(){
+  const list=document.getElementById('customCardsList');
+  if(!list)return;
+  const custom=loadCustomCards();
+  if(custom.length===0){
+    list.innerHTML='<span style="font-size:11px;color:#aaa;font-family:var(--sans);font-style:italic;">No custom cards yet</span>';
+    return;
+  }
+  list.innerHTML='';
+  custom.forEach((c,i)=>{
+    const row=document.createElement('div');row.className='custom-word-item';
+    row.innerHTML=`<span class="cw-word">${c.root}</span><span class="cw-note">${c.meaning}</span><button class="del-btn" title="Delete card" onclick="deleteCustomCard(${i})">✕</button>`;
+    list.appendChild(row);
+  });
+}
+
+function deleteCustomCard(i){
+  if(!confirm('Delete this custom card? This cannot be undone.'))return;
+  const existing=loadCustomCards();
+  const root=existing[i].root;
+  existing.splice(i,1);
+  saveCustomCards(existing);
+  localStorage.removeItem(customKey(root));
+  CARDS=buildCards();
+  if(currentIdx!==null&&currentIdx>=CARDS.length)currentIdx=null;
+  renderCustomCardsList();
+  updateCounter();
+  if(currentIdx===null)renderWords();
+}
+
+// ── INIT ──
+renderSubjectFilter();
+renderWords(); // title state
+syncSegs();
+</script>
+</body>
+</html>
